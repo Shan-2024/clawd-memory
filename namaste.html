@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nama-fucking-ste | Frank Gallagher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --bg: #FAFAF9;
+      --text: #1C1917;
+      --text-2: #57534E;
+      --text-3: #A8A29E;
+      --accent: #C84B26;
+      --border: rgba(28,25,23,0.08);
+    }
+    
+    html, body {
+      height: 100%;
+      font-family: 'Space Grotesk', 'Noto Serif SC', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+    
+    .container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      position: relative;
+    }
+    
+    /* 顶部返回 */
+    .back-btn {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text-3);
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    
+    .back-btn:hover { color: var(--text); }
+    
+    /* Frank 头像 */
+    .frank-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #E7E5E4 0%, #D6D3D1 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      color: var(--accent);
+      margin-bottom: 32px;
+      border: 3px solid var(--border);
+      position: relative;
+    }
+    
+    .frank-avatar::after {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+    }
+    
+    .frank-avatar.talking {
+      animation: shake 0.3s ease-in-out;
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-3deg); }
+      75% { transform: rotate(3deg); }
+    }
+    
+    /* 标题 */
+    .title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 42px;
+      letter-spacing: 4px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-3);
+      margin-bottom: 48px;
+      text-align: center;
+    }
+    
+    /* 台词区域 */
+    .quote-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      max-width: 600px;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s ease;
+      margin-bottom: 32px;
+    }
+    
+    .quote-container.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .quote-en {
+      font-size: 22px;
+      font-weight: 500;
+      line-height: 1.5;
+      text-align: center;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+    
+    .quote-cn {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 17px;
+      line-height: 1.7;
+      text-align: center;
+      color: var(--text-2);
+      padding: 0 20px;
+    }
+    
+    .quote-tag {
+      margin-top: 24px;
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--accent);
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border: 1px solid rgba(200,75,38,0.2);
+      border-radius: 100px;
+    }
+    
+    /* 收藏按钮 */
+    .collect-btn {
+      margin-top: 20px;
+      background: none;
+      border: none;
+      color: var(--text-3);
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+      padding: 8px 16px;
+    }
+    
+    .collect-btn:hover { color: var(--accent); }
+    .collect-btn.collected { color: var(--accent); }
+    
+    /* FUCK U 按钮 */
+    .fuck-btn {
+      background: var(--text);
+      color: #fff;
+      border: none;
+      padding: 20px 64px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 6px;
+      cursor: pointer;
+      border-radius: 100px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 20px rgba(28,25,23,0.15);
+      margin-bottom: 40px;
+    }
+    
+    .fuck-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(28,25,23,0.2);
+      background: var(--accent);
+    }
+    
+    .fuck-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 10px rgba(28,25,23,0.15);
+    }
+    
+    /* 底部 */
+    .footer {
+      font-size: 11px;
+      color: var(--text-3);
+      text-align: center;
+    }
+    
+    .saved-count {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    
+    /* 收藏列表弹窗 */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(28,25,23,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    
+    .modal-overlay.show { display: flex; }
+    
+    .modal {
+      background: var(--bg);
+      border-radius: 20px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 70vh;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 2px;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-3);
+    }
+    
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      max-height: 50vh;
+    }
+    
+    .saved-item {
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .saved-item-en {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    
+    .saved-item-cn {
+      font-size: 13px;
+      color: var(--text-2);
+    }
+    
+    .saved-item-tag {
+      font-size: 10px;
+      color: var(--accent);
+      margin-top: 8px;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html" class="back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to The Gallagher's
+    </a>
+    
+    <div class="frank-avatar" id="frankAvatar">F</div>
+    
+    <h1 class="title">NAMA-FUCKING-STE</h1>
+    <p class="subtitle">When life shits on you, Frank shits back.</p>
+    
+    <div class="quote-container" id="quoteContainer">
+      <div class="quote-en" id="quoteEn"></div>
+      <div class="quote-cn" id="quoteCn"></div>
+      <div class="quote-tag" id="quoteTag"></div>
+      <button class="collect-btn" id="collectBtn" onclick="toggleCollect()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        <span>Save to Kevin's Collection</span>
+      </button>
+    </div>
+    
+    <button class="fuck-btn" id="fuckBtn" onclick="generateQuote()">FUCK U</button>
+    
+    <div class="footer">
+      <span class="saved-count" id="savedCount">0</span> quotes saved to Kevin's English Collection
+      · <a href="#" onclick="showSaved(); return false;" style="color: var(--text-3);">View All</a>
+    </div>
+  </div>
+  
+  <!-- 收藏列表弹窗 -->
+  <div class="modal-overlay" id="modalOverlay" onclick="hideModal(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">KEVIN'S COLLECTION</span>
+        <button class="modal-close" onclick="hideSaved()">&times;</button>
+      </div>
+      <div class="modal-body" id="savedList">
+        <p style="text-align: center; color: var(--text-3);">No quotes saved yet. Go get some wisdom from Frank.</p>
+      </div>
+    </div>
+  </div>
+
+<script>
+// Frank 语录库
+const quotes = [
+  {
+    en: "If laughing at me makes you feel better about your pathetic life, then laugh. Consider it my gift to you.",
+    cn: "如果嘲笑我能让你对自己可悲的人生感觉好点，那就笑吧。就当我送你的礼物。",
+    tag: "Self-Worth"
+  },
+  {
+    en: "The only thing middle class about me is my ass. I shit like a king.",
+    cn: "我身上唯一中产阶级的地方就是我的屁股。我拉屎都像个国王。",
+    tag: "Middle Class"
+  },
+  {
+    en: "I'm not a bad father. I'm just not a traditional one. I teach my kids street smarts.",
+    cn: "我不是个坏父亲。我只是不走寻常路。我教我的孩子街头智慧。",
+    tag: "Parenting"
+  },
+  {
+    en: "Religion is just a way for poor people to feel better about being poor. I'm already comfortable with it.",
+    cn: "宗教只是让穷人对自己贫穷感觉好点的工具。而我，早就习惯了贫穷。",
+    tag: "Religion"
+  },
+  {
+    en: "The American Dream is dead. Long live the Frank Dream.",
+    cn: "美国梦已死。Frank 梦万岁。",
+    tag: "Politics"
+  },
+  {
+    en: "You think I don't know I'm a disappointment? I'm the most self-aware disappointment you'll ever meet.",
+    cn: "你以为我不知道自己是个废物？我是你这辈子见过最有自知之明的废物。",
+    tag: "Self-Awareness"
+  },
+  {
+    en: "Rich people think they're happy because they have money. Poor people know we're happy because we have nothing to lose.",
+    cn: "富人觉得自己快乐是因为有钱。穷人知道自己快乐是因为没什么可失去的。",
+    tag: "Class Warfare"
+  },
+  {
+    en: "I don't need your pity. I need your beer. And maybe your sandwich.",
+    cn: "我不需要你的同情。我需要你的啤酒。还有你的三明治。",
+    tag: "Survival"
+  },
+  {
+    en: "Depression is just your brain telling you that you're too good for this world. Listen to it. Then tell it to shut the fuck up.",
+    cn: "抑郁只是你的大脑告诉你，你对这个世界来说太好了。听着，然后让它他妈闭嘴。",
+    tag: "Mental Health"
+  },
+  {
+    en: "Capitalism is just organized crime with better marketing.",
+    cn: "资本主义就是营销做得更好的有组织犯罪。",
+    tag: "Economics"
+  },
+  {
+    en: "Your anxiety is just your soul saying 'this isn't it.' Trust that feeling. Then find the cheapest beer.",
+    cn: "你的焦虑只是你的灵魂在说'不是这个'。相信那个感觉。然后找最便宜的啤酒。",
+    tag: "Philosophy"
+  },
+  {
+    en: "I'm not homeless. I'm just between houses. Permanently.",
+    cn: "我不是无家可归。我只是在房子之间。永远地。",
+    tag: "Housing Crisis"
+  },
+  {
+    en: "The system isn't broken. It's working exactly as designed—to keep people like me down.",
+    cn: "系统没坏。它正在按设计运行——就是为了打压像我这样的人。",
+    tag: "System"
+  },
+  {
+    en: "Love is a chemical reaction. So is alcohol. I choose the one that doesn't disappoint me.",
+    cn: "爱是化学反应。酒精也是。我选那个不会让我失望的。",
+    tag: "Love"
+  },
+  {
+    en: "Gay, straight, bi, trans—we're all equally fucked by the economy.",
+    cn: "同性恋、异性恋、双性恋、跨性别——我们都被经济操得一样惨。",
+    tag: "LGBTQ+"
+  },
+  {
+    en: "Success is a scam invented by people who got lucky early.",
+    cn: "成功是那些早期走狗屎运的人发明的骗局。",
+    tag: "Success"
+  },
+  {
+    en: "You want life advice? Here's one: Never pay for anything you can steal. And never steal from people poorer than you.",
+    cn: "想要人生建议？给你一条：永远别为能偷的东西付钱。永远别偷比你更穷的人。",
+    tag: "Street Wisdom"
+  },
+  {
+    en: "Therapy is expensive. Beer is cheap. Do the math.",
+    cn: "心理治疗很贵。啤酒很便宜。自己算吧。",
+    tag: "Mental Health"
+  },
+  {
+    en: "I'm not lazy. I'm energy efficient.",
+    cn: "我不是懒。我是节能环保。",
+    tag: "Work Ethic"
+  },
+  {
+    en: "Your job doesn't define you. Your ability to scam free meals does.",
+    cn: "你的工作不能定义你。你蹭免费饭的能力才能。",
+    tag: "Identity"
+  }
+];
+
+// 本地存储
+let savedQuotes = JSON.parse(localStorage.getItem('frankQuotes') || '[]');
+let currentQuote = null;
+
+function generateQuote() {
+  // Frank 头像抖动
+  const avatar = document.getElementById('frankAvatar');
+  avatar.classList.add('talking');
+  setTimeout(() => avatar.classList.remove('talking'), 300);
+  
+  // 随机选择语录
+  currentQuote = quotes[Math.floor(Math.random() * quotes.length)];
+  
+  // 显示
+  document.getElementById('quoteEn').textContent = currentQuote.en;
+  document.getElementById('quoteCn').textContent = currentQuote.cn;
+  document.getElementById('quoteTag').textContent = currentQuote.tag;
+  
+  // 显示容器
+  const container = document.getElementById('quoteContainer');
+  container.classList.remove('show');
+  setTimeout(() => container.classList.add('show'), 50);
+  
+  // 重置收藏按钮
+  const btn = document.getElementById('collectBtn');
+  btn.classList.remove('collected');
+  btn.querySelector('span').textContent = 'Save to Kevin\'s Collection';
+  
+  // 更新按钮文字
+  const btnTexts = ['FUCK U', 'AGAIN', 'MORE', 'AGAIN?', 'FUCK OFF', 'KEEP GOING'];
+  document.getElementById('fuckBtn').textContent = 
+    btnTexts[Math.floor(Math.random() * btnTexts.length)];
+}
+
+function toggleCollect() {
+  if (!currentQuote) return;
+  
+  const btn = document.getElementById('collectBtn');
+  const existing = savedQuotes.find(q => q.en === currentQuote.en);
+  
+  if (existing) {
+    // 取消收藏
+    savedQuotes = savedQuotes.filter(q => q.en !== currentQuote.en);
+    btn.classList.remove('collected');
+    btn.querySelector('span').textContent = 'Save to Kevin\'s Collection';
+  } else {
+    // 添加收藏
+    savedQuotes.push({...currentQuote, savedAt: new Date().toISOString()});
+    btn.classList.add('collected');
+    btn.querySelector('span').textContent = 'Saved!';
+  }
+  
+  localStorage.setItem('frankQuotes', JSON.stringify(savedQuotes));
+  updateSavedCount();
+}
+
+function updateSavedCount() {
+  document.getElementById('savedCount').textContent = savedQuotes.length;
+}
+
+function showSaved() {
+  const list = document.getElementById('savedList');
+  
+  if (savedQuotes.length === 0) {
+    list.innerHTML = '<p style="text-align: center; color: var(--text-3);">No quotes saved yet. Go get some wisdom from Frank.</p>';
+  } else {
+    list.innerHTML = savedQuotes.slice().reverse().map(q => `
+      <div class="saved-item">
+        <div class="saved-item-en">${q.en}</div>
+        <div class="saved-item-cn">${q.cn}</div>
+        <div class="saved-item-tag">${q.tag}</div>
+      </div>
+    `).join('');
+  }
+  
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function hideSaved() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
+function hideModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) {
+    hideSaved();
+  }
+}
+
+// 初始化
+updateSavedCount();
+</script>
+</body>
+</html>
