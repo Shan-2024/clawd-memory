@@ -1,115 +1,872 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Gallagher's</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { font-family: 'Inter', system-ui, sans-serif; }
-        .character-tab { transition: all 0.2s ease; }
-        .character-tab:hover { background-color: #F4F4F5; }
-        .character-tab.active { background-color: #18181B; color: white; }
-        .app-card { transition: all 0.2s ease; cursor: pointer; }
-        .app-card:hover { transform: translateY(-2px); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1); }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #D4D4D8; border-radius: 3px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Gallagher's</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset ────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ─── Design Tokens ────────────────────────────────────────────── */
+    :root {
+      --bg:        #0C0A08;
+      --bg-2:      #131008;
+      --bg-3:      #1A1610;
+      --bg-4:      #221C14;
+      --bg-5:      #2A231A;
+      --accent:    #C84B26;
+      --acc-2:     #A83B1C;
+      --acc-dim:   #5E2210;
+      --acc-lo:    rgba(200,75,38,0.10);
+      --acc-mid:   rgba(200,75,38,0.18);
+      --acc-hi:    rgba(200,75,38,0.30);
+      --gold:      #B8924A;
+      --gold-dim:  #7A5E2A;
+      --text:      #ECD8B4;
+      --text-2:    #9A8268;
+      --text-3:    #5A4630;
+      --border:    rgba(184,146,74,0.10);
+      --border-hi: rgba(184,146,74,0.20);
+      --border-lo: rgba(184,146,74,0.05);
+      --r-sm:      8px;
+      --r-md:      12px;
+      --r-lg:      16px;
+      --sw:        248px;
+      --th:        62px;
+      --ease:      cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    /* ─── Base ──────────────────────────────────────────────────────── */
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ─── Film Grain Texture ─────────────────────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    }
+
+    /* ─── Layout Shell ───────────────────────────────────────────────── */
+    .layout {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* ─── Top Bar ────────────────────────────────────────────────────── */
+    .topbar {
+      height: var(--th);
+      background: var(--bg-2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px 0 20px;
+      gap: 0;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 20;
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .brand-wordmark {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      letter-spacing: 3.5px;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .brand-location {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+    }
+
+    .topbar-sep {
+      width: 1px;
+      height: 24px;
+      background: var(--border);
+      margin: 0 20px;
+      flex-shrink: 0;
+    }
+
+    .topbar-tagline {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-3);
+      letter-spacing: 0.2px;
+      font-style: italic;
+    }
+
+    .topbar-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 0 0 rgba(74,222,128,0.5);
+      animation: pulse-ring 2.5s ease-out infinite;
+    }
+
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 rgba(74,222,128,0.5); }
+      70%  { box-shadow: 0 0 0 6px rgba(74,222,128,0); }
+      100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+    }
+
+    .topbar-status-txt {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-3);
+      letter-spacing: 0.3px;
+    }
+
+    /* ─── Body Wrap ──────────────────────────────────────────────────── */
+    .body-wrap {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ─── Sidebar ────────────────────────────────────────────────────── */
+    .sidebar {
+      width: var(--sw);
+      background: var(--bg-2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .sidebar::-webkit-scrollbar { display: none; }
+
+    .sidebar-group-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 18px 16px 7px;
+    }
+
+    .sidebar-group-label span {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 3.5px;
+      color: var(--text-3);
+      text-transform: uppercase;
+    }
+
+    .sidebar-group-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-lo);
+    }
+
+    .char-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 10px 16px;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: background 200ms var(--ease),
+                  border-color 200ms var(--ease);
+      position: relative;
+      min-height: 44px;
+    }
+
+    .char-item:hover {
+      background: var(--bg-3);
+      border-left-color: var(--acc-dim);
+    }
+
+    .char-item.active {
+      background: var(--bg-4);
+      border-left-color: var(--accent);
+    }
+
+    .char-idx {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-3);
+      letter-spacing: 0.5px;
+      margin-top: 3px;
+      min-width: 16px;
+      font-variant-numeric: tabular-nums;
+      transition: color 200ms var(--ease);
+    }
+
+    .char-item.active .char-idx,
+    .char-item:hover .char-idx {
+      color: var(--accent);
+    }
+
+    .char-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .char-firstname {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 17px;
+      letter-spacing: 1.5px;
+      color: var(--text-2);
+      line-height: 1;
+      transition: color 200ms var(--ease);
+    }
+
+    .char-item.active .char-firstname,
+    .char-item:hover .char-firstname {
+      color: var(--text);
+    }
+
+    .char-lastname {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: var(--text-3);
+      text-transform: uppercase;
+      transition: color 200ms var(--ease);
+    }
+
+    .char-item.active .char-lastname {
+      color: var(--acc-dim);
+    }
+
+    .char-tagline {
+      font-size: 9.5px;
+      font-weight: 400;
+      color: var(--text-3);
+      font-style: italic;
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+
+    .char-pill {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 100px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-top: 3px;
+      opacity: 0;
+      transition: opacity 200ms var(--ease);
+      flex-shrink: 0;
+    }
+
+    .char-item.active .char-pill,
+    .char-item:hover .char-pill {
+      opacity: 1;
+    }
+
+    .char-item[data-count="0"] .char-pill {
+      display: none;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 14px 16px;
+      border-top: 1px solid var(--border-lo);
+    }
+
+    .sidebar-footer p {
+      font-size: 9px;
+      font-weight: 400;
+      color: var(--text-3);
+      line-height: 1.7;
+      letter-spacing: 0.3px;
+    }
+
+    /* ─── Main Content ───────────────────────────────────────────────── */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 48px 52px 64px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--bg-4) transparent;
+    }
+
+    .main::-webkit-scrollbar { width: 3px; }
+    .main::-webkit-scrollbar-thumb {
+      background: var(--bg-5);
+      border-radius: 2px;
+    }
+
+    /* ─── Character Hero ─────────────────────────────────────────────── */
+    .char-hero {
+      margin-bottom: 44px;
+      animation: fade-up 280ms var(--ease) both;
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .hero-eyebrow-line {
+      width: 24px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-eyebrow-txt {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .hero-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 68px;
+      letter-spacing: 5px;
+      line-height: 0.92;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+
+    .hero-quote {
+      display: flex;
+      gap: 14px;
+      max-width: 580px;
+    }
+
+    .hero-quote-bar {
+      width: 2px;
+      background: var(--acc-dim);
+      border-radius: 1px;
+      flex-shrink: 0;
+      margin: 2px 0;
+    }
+
+    .hero-quote-txt {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-2);
+      font-style: italic;
+      line-height: 1.65;
+      letter-spacing: 0.1px;
+    }
+
+    .hero-rule {
+      height: 1px;
+      background: var(--border);
+      margin-top: 32px;
+    }
+
+    /* ─── Section Label ──────────────────────────────────────────────── */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: var(--text-3);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      margin-top: 32px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-lo);
+    }
+
+    /* ─── App Grid ───────────────────────────────────────────────────── */
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+      gap: 14px;
+      animation: fade-up 300ms var(--ease) 60ms both;
+    }
+
+    /* ─── App Card ───────────────────────────────────────────────────── */
+    .app-card {
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 22px 20px 18px;
+      cursor: pointer;
+      transition: background 200ms var(--ease),
+                  border-color 200ms var(--ease),
+                  box-shadow 200ms var(--ease),
+                  transform 200ms var(--ease);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+      min-height: 44px;
+    }
+
+    .app-card:hover {
+      background: var(--bg-4);
+      border-color: var(--border-hi);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+    }
+
+    .app-card:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .app-card.coming-soon {
+      cursor: default;
+      opacity: 0.38;
+      border-style: dashed;
+    }
+
+    .app-card.coming-soon:hover {
+      background: var(--bg-3);
+      border-color: var(--border);
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Arrow indicator */
+    .card-arrow {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      color: var(--text-3);
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: opacity 200ms var(--ease),
+                  transform 200ms var(--ease);
+      display: flex;
+      align-items: center;
+    }
+
+    .app-card:not(.coming-soon):hover .card-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Icon wrapper */
+    .app-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--r-sm);
+      background: var(--acc-lo);
+      border: 1px solid rgba(200,75,38,0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      flex-shrink: 0;
+      transition: background 200ms var(--ease),
+                  border-color 200ms var(--ease);
+    }
+
+    .app-card.coming-soon .app-icon-wrap {
+      color: var(--text-3);
+      background: var(--bg-4);
+      border-color: var(--border-lo);
+    }
+
+    .app-card:not(.coming-soon):hover .app-icon-wrap {
+      background: var(--acc-mid);
+      border-color: rgba(200,75,38,0.40);
+    }
+
+    /* Card text */
+    .app-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+      letter-spacing: 0.1px;
+      padding-right: 22px;
+    }
+
+    .app-desc {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-2);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    /* Status badge */
+    .app-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      padding: 3px 8px 3px 7px;
+      border-radius: 100px;
+      width: fit-content;
+      margin-top: 2px;
+    }
+
+    .app-badge.live {
+      background: rgba(200,75,38,0.12);
+      color: var(--accent);
+      border: 1px solid rgba(200,75,38,0.22);
+    }
+
+    .app-badge.live::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 5px var(--accent);
+    }
+
+    .app-badge.soon {
+      background: var(--bg-5);
+      color: var(--text-3);
+      border: 1px solid var(--border-lo);
+    }
+
+    /* ─── Empty State ────────────────────────────────────────────────── */
+    .empty-state {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 52px 8px;
+      animation: fade-up 300ms var(--ease) 80ms both;
+    }
+
+    .empty-icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--r-md);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-3);
+      margin-bottom: 4px;
+    }
+
+    .empty-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-2);
+      letter-spacing: 0.1px;
+    }
+
+    .empty-desc {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-3);
+      line-height: 1.6;
+      max-width: 280px;
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-900 h-screen overflow-hidden">
-    <div class="flex h-full">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
-            <div class="p-6 border-b border-gray-200">
-                <h1 class="text-xl font-bold tracking-tight">The Gallagher's</h1>
-                <p class="text-xs text-gray-500 mt-1">Personal Workspace</p>
-            </div>
-            <nav class="flex-1 overflow-y-auto py-4">
-                <div class="px-3 mb-2"><span class="text-xs font-medium text-gray-400 uppercase tracking-wider px-3">Family</span></div>
-                <div id="character-list" class="space-y-1 px-3"></div>
-            </nav>
-        </aside>
-        
-        <!-- Main Content -->
-        <main class="flex-1 overflow-y-auto">
-            <div class="max-w-6xl mx-auto p-8">
-                <div class="mb-10">
-                    <h2 id="current-character-name" class="text-3xl font-bold tracking-tight mb-2">Select a Character</h2>
-                    <p id="current-character-desc" class="text-gray-500">Choose a Gallagher to see their tools</p>
-                </div>
-                <div id="app-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
-            </div>
-        </main>
+<body>
+<div class="layout">
+
+  <!-- ── Top Bar ────────────────────────────────────────────────────── -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="brand-wordmark">The Gallagher's</span>
+      <span class="brand-location">South Side · Chicago</span>
     </div>
-    
-    <!-- App Container -->
-    <div id="app-container" class="fixed inset-0 bg-gray-50 z-50 hidden">
-        <div class="h-full flex flex-col">
-            <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <button id="back-btn" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
-                    </button>
-                    <h3 id="app-title" class="text-lg font-semibold">App Name</h3>
-                </div>
-                <span id="app-character" class="text-sm text-gray-500 px-3 py-1 bg-gray-100 rounded-full">Character</span>
-            </header>
-            <div id="app-content" class="flex-1 overflow-y-auto p-6"></div>
-        </div>
+    <div class="topbar-sep"></div>
+    <span class="topbar-tagline">"We don't get handouts on the South Side."</span>
+    <div class="topbar-right">
+      <div class="pulse-dot"></div>
+      <span class="topbar-status-txt">All systems live</span>
     </div>
+  </header>
+
+  <div class="body-wrap">
+
+    <!-- ── Sidebar ────────────────────────────────────────────────────── -->
+    <nav class="sidebar" id="sidebar">
+      <div id="char-list"></div>
+      <div class="sidebar-footer">
+        <p>The Gallagher's Workspace<br/>South Side, Chicago IL</p>
+      </div>
+    </nav>
+
+    <!-- ── Main ───────────────────────────────────────────────────────── -->
+    <main class="main" id="main-content"></main>
+
+  </div>
+</div>
 
 <script>
-const characters = [
-    { id: 'frank', name: 'Frank', fullName: 'Frank Gallagher', desc: 'Live in the moment, no regrets', color: '#18181B', apps: [{ id: 'nama-ste', name: 'Nama-fucking-ste', desc: 'Frank-style wisdom for breakdown moments', icon: '✦' }] },
-    { id: 'kevin', name: 'Kevin', fullName: 'Kevin Ball', desc: 'Simple, direct, always there', color: '#2563EB', apps: [{ id: 'english', name: 'Shameless English', desc: 'Learn from iconic quotes & scenes', icon: '☐' }] },
-    { id: 'carl', name: 'Carl', fullName: 'Carl Gallagher', desc: 'Discipline, justice, law', color: '#DC2626', apps: [{ id: 'fakao', name: '法考宝典', desc: '0基础法考学习助手', icon: '⚖' }] },
-    { id: 'debbie', name: 'Debbie', fullName: 'Debbie Gallagher', desc: 'DIY genius, practical solutions', color: '#EA580C', apps: [{ id: 'dupes', name: '化妆品平替大全', desc: '成分对比分析，大牌平替推荐', icon: '⚗' }] },
-    { id: 'svetlana', name: 'Svetlana', fullName: 'Svetlana', desc: 'Business, hustle, side income', color: '#7C3AED', apps: [{ id: 'hustle', name: '副业管理', desc: 'Track your side businesses', icon: '$' }] }
+// ─── SVG Icon Library ─────────────────────────────────────────────────
+const IC = {
+  zap: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+
+  bookOpen: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+
+  landmark: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>`,
+
+  flaskConical: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/><path d="M7 16h10"/></svg>`,
+
+  wrench: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
+
+  plus: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+
+  arrowRight: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`,
+
+  hammer: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m15 12-8.5 8.5a2.12 2.12 0 1 1-3-3L12 9"/><path d="M17.64 15 22 10.64"/><path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25v-.86L16.01 4.6a5.56 5.56 0 0 0-3.94-1.64H9l.92.82A6.18 6.18 0 0 1 12 8.4v1.56l2 2h2.47l2.26 1.91"/></svg>`,
+};
+
+// ─── Character & App Data ──────────────────────────────────────────────
+const CHARS = [
+  {
+    id: 'frank', group: 'family',
+    firstName: 'Frank', lastName: 'Gallagher',
+    tagline: 'Philosopher. Survivor. Legend.',
+    quote: '"The world belongs to those drunk enough to forget their limits." — Frank Gallagher',
+    apps: [
+      {
+        id: 'namaste', icon: 'zap', status: 'live', page: 'namaste.html',
+        name: 'Nama-fucking-ste',
+        desc: '人生挫折专用。Frank式心灵毒鸡汤——不走鸡汤路线，走 Frank 路线。',
+      }
+    ]
+  },
+  {
+    id: 'kevin', group: 'crew',
+    firstName: 'Kevin', lastName: 'Ball',
+    tagline: 'Bartender. Heart of the block.',
+    quote: '"I may not be the smartest guy. But I know everyone\'s name." — Kevin Ball',
+    apps: [
+      {
+        id: 'alibi', icon: 'bookOpen', status: 'live', page: 'alibi-english.html',
+        name: 'The Alibi Room English',
+        desc: '用 Shameless 截图学真正的口语、俚语和骚话。配单词卡 + 测验。',
+      }
+    ]
+  },
+  {
+    id: 'carl', group: 'family',
+    firstName: 'Carl', lastName: 'Gallagher',
+    tagline: 'Chaos. Justice. His own way.',
+    quote: '"I\'m not crazy. I just see things differently." — Carl Gallagher',
+    apps: [
+      {
+        id: 'lawexam', icon: 'landmark', status: 'live', page: 'law-exam.html',
+        name: '法考宝典',
+        desc: '0基础备战法考。Carl式正义之路——从街头到法庭，一步一步来。',
+      }
+    ]
+  },
+  {
+    id: 'debbie', group: 'family',
+    firstName: 'Debbie', lastName: 'Gallagher',
+    tagline: "Don't underestimate her.",
+    quote: '"I know exactly what I\'m worth. And I\'m not giving it away cheap." — Debbie Gallagher',
+    apps: [
+      {
+        id: 'dupe', icon: 'flaskConical', status: 'live', page: 'dupe-finder.html',
+        name: '化妆品平替大全',
+        desc: '输入大牌产品，AI 解析成分表，找功效相近的平价平替，附详细差异对比。',
+      }
+    ]
+  },
+  {
+    id: 'fiona', group: 'family',
+    firstName: 'Fiona', lastName: 'Gallagher',
+    tagline: 'She holds it all together.',
+    quote: '"I\'ve been taking care of this family my whole life." — Fiona Gallagher',
+    apps: []
+  },
+  {
+    id: 'lip', group: 'family',
+    firstName: 'Lip', lastName: 'Gallagher',
+    tagline: 'Too smart for his own good.',
+    quote: '"The thing about being smart is everyone expects you to fix their mess." — Lip Gallagher',
+    apps: []
+  },
+  {
+    id: 'ian', group: 'family',
+    firstName: 'Ian', lastName: 'Gallagher',
+    tagline: 'Fight for what matters.',
+    quote: '"I know who I am. That took a while, but I know." — Ian Gallagher',
+    apps: []
+  },
+  {
+    id: 'v', group: 'crew',
+    firstName: 'Veronica', lastName: 'Fisher',
+    tagline: "V knows exactly what's up.",
+    quote: '"I don\'t do anything I don\'t want to do. Period." — Veronica Fisher',
+    apps: []
+  },
+  {
+    id: 'liam', group: 'family',
+    firstName: 'Liam', lastName: 'Gallagher',
+    tagline: 'The youngest. Watching everything.',
+    quote: '"I\'m a Gallagher. I figure things out." — Liam Gallagher',
+    apps: []
+  },
 ];
 
-let currentChar = null;
-const charList = document.getElementById('character-list');
-const charName = document.getElementById('current-character-name');
-const charDesc = document.getElementById('current-character-desc');
-const appGrid = document.getElementById('app-grid');
-const appContainer = document.getElementById('app-container');
+// ─── State ────────────────────────────────────────────────────────────
+let activeId = 'frank';
 
-function renderChars() {
-    charList.innerHTML = characters.map(c => `
-        <button class="character-tab w-full text-left px-4 py-3 rounded-xl flex items-center gap-3" data-id="${c.id}" onclick="selectChar('${c.id}')">
-            <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white" style="background:${c.color}">${c.name[0]}</div>
-            <div><div class="font-medium text-sm">${c.name}</div><div class="text-xs text-gray-400">${c.apps.length} app</div></div>
-        </button>
-    `).join('');
-}
+// ─── Helpers ──────────────────────────────────────────────────────────
+function pad(n) { return String(n).padStart(2, '0'); }
 
-function selectChar(id) {
-    currentChar = characters.find(c => c.id === id);
-    document.querySelectorAll('.character-tab').forEach(t => t.classList.toggle('active', t.dataset.id === id));
-    charName.textContent = currentChar.fullName;
-    charDesc.textContent = currentChar.desc;
-    appGrid.innerHTML = currentChar.apps.map(a => `
-        <div class="app-card bg-white border border-gray-200 rounded-2xl p-6" onclick="openApp('${a.id}')">
-            <div class="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4" style="background:${currentChar.color}15;color:${currentChar.color}">${a.icon}</div>
-            <h3 class="font-semibold text-lg mb-2">${a.name}</h3>
-            <p class="text-sm text-gray-500">${a.desc}</p>
+// ─── Render Sidebar ───────────────────────────────────────────────────
+function renderSidebar() {
+  const list = document.getElementById('char-list');
+  const groups = [
+    { key: 'family', label: 'Family' },
+    { key: 'crew',   label: 'South Side' },
+  ];
+
+  let html = '';
+  let idx = 0;
+  groups.forEach(g => {
+    const members = CHARS.filter(c => c.group === g.key);
+    if (!members.length) return;
+    html += `<div class="sidebar-group-label"><span>${g.label}</span></div>`;
+    members.forEach(c => {
+      idx++;
+      html += `
+        <div class="char-item ${c.id === activeId ? 'active' : ''}"
+             data-count="${c.apps.length}"
+             onclick="selectChar('${c.id}')">
+          <span class="char-idx">${pad(idx)}</span>
+          <div class="char-info">
+            <span class="char-firstname">${c.firstName}</span>
+            <span class="char-lastname">${c.lastName}</span>
+            <span class="char-tagline">${c.tagline}</span>
+          </div>
+          <span class="char-pill">${c.apps.length}</span>
         </div>
+      `;
+    });
+  });
+
+  list.innerHTML = html;
+}
+
+// ─── Render Main ──────────────────────────────────────────────────────
+function renderMain(char) {
+  const main = document.getElementById('main-content');
+
+  let appsHTML = '';
+
+  if (char.apps.length > 0) {
+    appsHTML = char.apps.map(app => `
+      <div class="app-card"
+           role="button"
+           tabindex="0"
+           onclick="openApp('${app.page}', '${app.name}')"
+           onkeydown="if(event.key==='Enter') openApp('${app.page}','${app.name}')">
+        <div class="card-arrow">${IC.arrowRight}</div>
+        <div class="app-icon-wrap">${IC[app.icon] || IC.plus}</div>
+        <div class="app-name">${app.name}</div>
+        <div class="app-desc">${app.desc}</div>
+        <div class="app-badge ${app.status === 'live' ? 'live' : 'soon'}">
+          ${app.status === 'live' ? 'Available' : 'Coming Soon'}
+        </div>
+      </div>
     `).join('');
+  } else {
+    appsHTML = `
+      <div class="empty-state">
+        <div class="empty-icon-wrap">${IC.wrench}</div>
+        <div class="empty-title">Under Construction</div>
+        <div class="empty-desc">Something's being built. South Side doesn't rush for anyone.</div>
+      </div>
+    `;
+  }
+
+  main.innerHTML = `
+    <div class="char-hero">
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-line"></div>
+        <span class="hero-eyebrow-txt">Character · The Gallagher's</span>
+      </div>
+      <div class="hero-name">${char.firstName}<br>${char.lastName}</div>
+      <div class="hero-quote">
+        <div class="hero-quote-bar"></div>
+        <p class="hero-quote-txt">${char.quote}</p>
+      </div>
+      <div class="hero-rule"></div>
+    </div>
+    <div class="section-label">${char.apps.length > 0 ? `${char.firstName}'s Tools` : 'Tools'}</div>
+    <div class="apps-grid">${appsHTML}</div>
+  `;
 }
 
-function openApp(id) {
-    const app = currentChar.apps.find(a => a.id === id);
-    document.getElementById('app-title').textContent = app.name;
-    document.getElementById('app-character').textContent = currentChar.name;
-    document.getElementById('app-content').innerHTML = `<div class="max-w-2xl mx-auto bg-white border border-gray-200 rounded-2xl p-8"><h4 class="text-2xl font-bold mb-4">${app.name}</h4><p class="text-gray-500">App content coming soon...</p></div>`;
-    appContainer.classList.remove('hidden');
+// ─── Select Character ─────────────────────────────────────────────────
+function selectChar(id) {
+  activeId = id;
+  const char = CHARS.find(c => c.id === id);
+  renderSidebar();
+  renderMain(char);
+  document.getElementById('main-content').scrollTop = 0;
 }
 
-document.getElementById('back-btn').onclick = () => appContainer.classList.add('hidden');
+// ─── Open App ─────────────────────────────────────────────────────────
+function openApp(page, name) {
+  // TODO: navigate to sub-page
+  console.log('Opening:', page);
+}
 
-renderChars();
-selectChar('frank');
+// ─── Init ─────────────────────────────────────────────────────────────
+renderSidebar();
+renderMain(CHARS.find(c => c.id === activeId));
 </script>
 </body>
 </html>
