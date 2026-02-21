@@ -366,6 +366,110 @@
       text-transform: uppercase;
     }
     
+    /* The Alibi 酒吧场景 */
+    .alibi-wall {
+      background: linear-gradient(180deg, #2A231A 0%, #1A1610 100%);
+      border-radius: 12px;
+      padding: 24px;
+      min-height: 300px;
+    }
+    
+    .alibi-sign {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid rgba(184,146,74,0.3);
+    }
+    
+    .alibi-sign h4 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      color: #B8924A;
+      letter-spacing: 4px;
+    }
+    
+    .alibi-sign p {
+      font-size: 11px;
+      color: #7A5E2A;
+      letter-spacing: 2px;
+    }
+    
+    .drink-menu {
+      display: grid;
+      gap: 16px;
+    }
+    
+    .drink-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(184,146,74,0.2);
+      border-radius: 8px;
+      padding: 20px;
+      position: relative;
+    }
+    
+    .drink-item::before {
+      content: '🍺';
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      background: #2A231A;
+      padding: 0 8px;
+      font-size: 14px;
+    }
+    
+    .drink-quote {
+      font-size: 15px;
+      font-weight: 500;
+      color: #ECD8B4;
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+    
+    .drink-translation {
+      font-size: 13px;
+      color: #9A8268;
+      margin-bottom: 12px;
+    }
+    
+    .drink-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .drink-type {
+      font-size: 10px;
+      color: #C84B26;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid rgba(200,75,38,0.3);
+      border-radius: 100px;
+    }
+    
+    .drink-play {
+      background: none;
+      border: none;
+      color: #B8924A;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .alibi-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: #7A5E2A;
+    }
+    
+    .alibi-empty .beer-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    
     /* 响应式 */
     @media (max-width: 640px) {
       .main-card { padding: 24px; }
@@ -444,7 +548,7 @@
       <!-- 操作按钮 -->
       <div class="actions">
         <button class="btn btn-primary" id="generateBtn" onclick="generateQuote()">
-          <span id="btnText">HIT ME 🍺</span>
+          <span id="btnText">POUR ME A DRINK 🍺</span>
         </button>
         <button class="btn btn-secondary" id="saveBtn" onclick="toggleSave()" disabled>
           <span>🍺 Save to The Alibi</span>
@@ -648,7 +752,7 @@ function generateQuote() {
       clickCount = 0;
       btn.disabled = false;
       btn.style.opacity = "1";
-      btnText.textContent = isLateNight() ? "HIT ME 🍺🍺" : "HIT ME 🍺";
+      btnText.textContent = isLateNight() ? "POUR ME A DRINK 🍺🍺" : "POUR ME A DRINK 🍺";
     }, 10000);
     return;
   }
@@ -680,6 +784,9 @@ function generateQuote() {
     <div class="quote-cn">${currentQuote.cn}</div>
     <div class="quote-meta">
       <span class="quote-tag">${currentQuote.tag}</span>
+      <button onclick="speakQuote('${currentQuote.en.replace(/'/g, "\\'")}')" style="background: none; border: none; cursor: pointer; color: var(--accent); font-size: 13px; display: flex; align-items: center; gap: 4px;">
+        🔊 Hear Frank Say It
+      </button>
     </div>
   `;
   
@@ -719,18 +826,41 @@ function showSaved() {
   
   if (savedQuotes.length === 0) {
     list.innerHTML = `
-      <p style="text-align: center; color: var(--text-3); padding: 40px;">
-        The Alibi is empty.<br>Go ask Frank for some wisdom, then bring it back to the bar.
-      </p>
+      <div class="alibi-wall">
+        <div class="alibi-sign">
+          <h4>THE ALIBI ROOM</h4>
+          <p>SOUTH SIDE, CHICAGO</p>
+        </div>
+        <div class="alibi-empty">
+          <div class="beer-icon">🍺</div>
+          <p>The bar is empty tonight.</p>
+          <p style="font-size: 13px; margin-top: 8px;">Go ask Frank for some wisdom, then bring it back.</p>
+        </div>
+      </div>
     `;
   } else {
-    list.innerHTML = savedQuotes.slice().reverse().map(q => `
-      <div class="saved-item">
-        <div class="saved-item-en">"${q.en}"</div>
-        <div class="saved-item-cn">${q.cn}</div>
-        <div class="saved-item-tag">${q.tag} · Saved for learning</div>
+    list.innerHTML = `
+      <div class="alibi-wall">
+        <div class="alibi-sign">
+          <h4>THE ALIBI ROOM</h4>
+          <p>SOUTH SIDE, CHICAGO · ${savedQuotes.length} DRINKS ON THE WALL</p>
+        </div>
+        <div class="drink-menu">
+          ${savedQuotes.slice().reverse().map((q, i) => `
+            <div class="drink-item">
+              <div class="drink-quote">"${q.en}"</div>
+              <div class="drink-translation">${q.cn}</div>
+              <div class="drink-footer">
+                <span class="drink-type">${q.tag}</span>
+                <button class="drink-play" onclick="speakQuote('${q.en.replace(/'/g, "\\'")}')">
+                  🔊 Order Again
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
       </div>
-    `).join('');
+    `;
   }
   
   document.getElementById('modalOverlay').classList.add('show');
@@ -771,8 +901,82 @@ function showRestingQuote() {
 
 // 深夜模式提示
 if (isLateNight()) {
-  document.getElementById('btnText').textContent = "HIT ME 🍺🍺";
+  document.getElementById('btnText').textContent = "POUR ME A DRINK 🍺🍺";
 }
+
+// 每日金句（基于日期）
+function getDailyQuote() {
+  const today = new Date().toDateString();
+  const savedDate = localStorage.getItem('frankDailyDate');
+  const savedQuote = localStorage.getItem('frankDailyQuote');
+  
+  if (savedDate === today && savedQuote) {
+    return JSON.parse(savedQuote);
+  }
+  
+  // 生成新的每日金句
+  const daily = quotes[Math.floor(Math.random() * quotes.length)];
+  localStorage.setItem('frankDailyDate', today);
+  localStorage.setItem('frankDailyQuote', JSON.stringify(daily));
+  return daily;
+}
+
+// 语音朗读
+function speakQuote(text) {
+  if ('speechSynthesis' in window) {
+    // 取消之前的朗读
+    window.speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9;
+    utterance.pitch = 0.8; // 低沉的声音
+    
+    // 尝试找一个低沉的男声
+    const voices = window.speechSynthesis.getVoices();
+    const maleVoice = voices.find(v => v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google US English'));
+    if (maleVoice) {
+      utterance.voice = maleVoice;
+    }
+    
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+// 显示每日金句
+function showDailyQuote() {
+  const daily = getDailyQuote();
+  currentQuote = daily;
+  
+  const card = document.getElementById('quoteCard');
+  card.classList.remove('empty');
+  card.innerHTML = `
+    <div style="font-size: 11px; color: var(--accent); letter-spacing: 2px; margin-bottom: 16px; text-transform: uppercase;">🍺 Today's Special at The Alibi</div>
+    <div class="quote-en">"${daily.en}"</div>
+    <div class="quote-cn">${daily.cn}</div>
+    <div class="quote-meta">
+      <span class="quote-tag">${daily.tag}</span>
+      <button onclick="speakQuote('${daily.en.replace(/'/g, "\\'")}')" style="background: none; border: none; cursor: pointer; color: var(--accent); font-size: 13px; display: flex; align-items: center; gap: 4px;">
+        🔊 Hear Frank Say It
+      </button>
+    </div>
+  `;
+  
+  // 启用保存按钮
+  const saveBtn = document.getElementById('saveBtn');
+  saveBtn.disabled = false;
+  saveBtn.classList.remove('collected');
+  const isSaved = savedQuotes.find(q => q.en === daily.en);
+  if (isSaved) {
+    saveBtn.classList.add('collected');
+    saveBtn.querySelector('span').textContent = '🍺 Saved to The Alibi';
+  } else {
+    saveBtn.querySelector('span').textContent = '🍺 Save to The Alibi';
+  }
+}
+
+// 页面加载时显示每日金句
+showDailyQuote();
 </script>
 </body>
 </html>
