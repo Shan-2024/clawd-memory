@@ -374,6 +374,38 @@
       .actions { flex-direction: column; }
       .btn { width: 100%; justify-content: center; }
     }
+    /* 深夜模式 */
+    body.late-night {
+      background: #0C0A08;
+    }
+    
+    body.late-night .layout,
+    body.late-night .main-card,
+    body.late-night .stats-card {
+      background: #1A1610;
+      color: #ECD8B4;
+      border-color: rgba(184,146,74,0.1);
+    }
+    
+    body.late-night .quote-card {
+      background: #131008;
+    }
+    
+    body.late-night .frank-info h2,
+    body.late-night .quote-en {
+      color: #ECD8B4;
+    }
+    
+    body.late-night .quote-cn,
+    body.late-night .frank-info p {
+      color: #9A8268;
+    }
+    
+    body.late-night .btn-secondary {
+      background: #221C14;
+      border-color: rgba(184,146,74,0.2);
+      color: #9A8268;
+    }
   </style>
 </head>
 <body>
@@ -412,8 +444,7 @@
       <!-- 操作按钮 -->
       <div class="actions">
         <button class="btn btn-primary" id="generateBtn" onclick="generateQuote()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          GIVE ME WISDOM
+          <span id="btnText">HIT ME 🍺</span>
         </button>
         <button class="btn btn-secondary" id="saveBtn" onclick="toggleSave()" disabled>
           <span>🍺 Save to The Alibi</span>
@@ -556,22 +587,89 @@ const quotes = [
 let savedQuotes = JSON.parse(localStorage.getItem('frankQuotes') || '[]');
 let currentQuote = null;
 let usedQuotes = [];
+let clickCount = 0;
+let isResting = false;
+
+// 深夜醉鬼语录（更疯版本）
+const drunkQuotes = [
+  {
+    en: "You think YOU have problems? I forgot where I live three times this week.",
+    cn: "你以为你有问题？我这周忘了自己住哪三次。",
+    tag: "Lost & Confused"
+  },
+  {
+    en: "It's 3am and I'm still prettier than your career.",
+    cn: "凌晨三点了，我还比你的事业体面。",
+    tag: "Late Night Truth"
+  },
+  {
+    en: "The only thing I'm committed to is not committing to anything.",
+    cn: "我唯一承诺的就是不承诺任何事。",
+    tag: "Commitment Issues"
+  },
+  {
+    en: "Your ex blocked you? I've been blocked by life itself.",
+    cn: "你前任拉黑你？我被生活本身拉黑了。",
+    tag: "Blocked"
+  },
+  {
+    en: "I'm not drunk, I'm just horizontally challenged when standing.",
+    cn: "我没醉，我只是站着的时候水平有点挑战。",
+    tag: "Gravity Check"
+  }
+];
 
 // 初始化
 updateSavedCount();
 
+// 深夜模式检测
+if (isLateNight()) {
+  document.body.classList.add('late-night');
+}
+
 function generateQuote() {
+  if (isResting) return;
+  
+  clickCount++;
+  
+  // Frank 需要休息（连续5次后）
+  if (clickCount >= 5) {
+    isResting = true;
+    const btn = document.getElementById('generateBtn');
+    const btnText = document.getElementById('btnText');
+    btn.disabled = true;
+    btnText.textContent = "GIMME A BREAK... (10s)";
+    btn.style.opacity = "0.6";
+    
+    showRestingQuote();
+    
+    setTimeout(() => {
+      isResting = false;
+      clickCount = 0;
+      btn.disabled = false;
+      btn.style.opacity = "1";
+      btnText.textContent = isLateNight() ? "HIT ME 🍺🍺" : "HIT ME 🍺";
+    }, 10000);
+    return;
+  }
+  
   const avatar = document.getElementById('frankAvatar');
   avatar.classList.add('talking');
   setTimeout(() => avatar.classList.remove('talking'), 300);
   
+  // 深夜模式：混入醉鬼语录
+  let pool = quotes;
+  if (isLateNight() && Math.random() > 0.5) {
+    pool = drunkQuotes;
+  }
+  
   // 随机选择（避免重复）
-  const available = quotes.filter(q => !usedQuotes.includes(q.en));
+  const available = pool.filter(q => !usedQuotes.includes(q.en));
   if (available.length === 0) {
     usedQuotes = [];
   }
-  const pool = available.length > 0 ? available : quotes;
-  currentQuote = pool[Math.floor(Math.random() * pool.length)];
+  const finalPool = available.length > 0 ? available : pool;
+  currentQuote = finalPool[Math.floor(Math.random() * finalPool.length)];
   usedQuotes.push(currentQuote.en);
   
   // 更新卡片
@@ -646,6 +744,34 @@ function hideModal(e) {
   if (e.target === document.getElementById('modalOverlay')) {
     hideSaved();
   }
+}
+
+// 检查是否深夜（22:00-6:00）
+function isLateNight() {
+  const hour = new Date().getHours();
+  return hour >= 22 || hour < 6;
+}
+
+// Frank 休息时显示的语录
+function showRestingQuote() {
+  const card = document.getElementById('quoteCard');
+  card.classList.remove('empty');
+  card.innerHTML = `
+    <div class="quote-en" style="color: var(--text-3); font-style: italic;">
+      "Jesus Christ, give me a fucking minute. Even philosophers need to piss."
+    </div>
+    <div class="quote-cn" style="color: var(--text-3);">
+      基督啊，让我喘口气。就算是哲学家也要撒尿的。
+    </div>
+    <div class="quote-meta">
+      <span class="quote-tag">Frank Needs a Break</span>
+    </div>
+  `;
+}
+
+// 深夜模式提示
+if (isLateNight()) {
+  document.getElementById('btnText').textContent = "HIT ME 🍺🍺";
 }
 </script>
 </body>
