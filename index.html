@@ -653,6 +653,8 @@ const IC = {
   arrowRight: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`,
 
   hammer: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m15 12-8.5 8.5a2.12 2.12 0 1 1-3-3L12 9"/><path d="M17.64 15 22 10.64"/><path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25v-.86L16.01 4.6a5.56 5.56 0 0 0-3.94-1.64H9l.92.82A6.18 6.18 0 0 1 12 8.4v1.56l2 2h2.47l2.26 1.91"/></svg>`,
+
+  dollarSign: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
 };
 
 // ─── Character & App Data ──────────────────────────────────────────────
@@ -743,6 +745,19 @@ const CHARS = [
     tagline: 'The youngest. Watching everything.',
     quote: '"I\'m a Gallagher. I figure things out." — Liam Gallagher',
     apps: []
+  },
+  {
+    id: 'svetlana', group: 'crew',
+    firstName: 'Svetlana', lastName: '',
+    tagline: 'Business, hustle, side income.',
+    quote: '"In this country, you make your own opportunities." — Svetlana',
+    apps: [
+      {
+        id: 'hustle', icon: 'dollarSign', status: 'live', page: 'side-hustle.html',
+        name: '副业管理',
+        desc: '做生意、赚外块、管理现金流。Svetlana 式精明生意经。',
+      }
+    ]
   },
 ];
 
