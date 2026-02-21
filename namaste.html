@@ -416,8 +416,7 @@
           GIVE ME WISDOM
         </button>
         <button class="btn btn-secondary" id="saveBtn" onclick="toggleSave()" disabled>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          <span>Save to Kevin</span>
+          <span>🍺 Save to The Alibi</span>
         </button>
       </div>
     </div>
@@ -425,7 +424,7 @@
     <!-- 统计卡片 -->
     <div class="stats-card">
       <div class="stats-info">
-        <h3>QUOTES SAVED TO KEVIN'S COLLECTION</h3>
+        <h3>🍺 QUOTES SAVED TO THE ALIBI</h3>
         <div class="number" id="savedCount">0</div>
       </div>
       <button class="view-saved-btn" onclick="showSaved()">View All</button>
@@ -436,13 +435,13 @@
   <div class="modal-overlay" id="modalOverlay" onclick="hideModal(event)">
     <div class="modal">
       <div class="modal-header">
-        <span class="modal-title">KEVIN'S ENGLISH COLLECTION</span>
+        <span class="modal-title">🍺 THE ALIBI ARCHIVE</span>
         <button class="modal-close" onclick="hideSaved()">&times;</button>
       </div>
       <div class="modal-body" id="savedList">
         <p style="text-align: center; color: var(--text-3); padding: 40px;">
           No quotes saved yet.<br>
-          Go ask Frank for some wisdom.
+          Go ask Frank for some wisdom, then bring it back to the bar.
         </p>
       </div>
     </div>
@@ -602,11 +601,11 @@ function toggleSave() {
   if (existing) {
     savedQuotes = savedQuotes.filter(q => q.en !== currentQuote.en);
     btn.classList.remove('collected');
-    btn.querySelector('span').textContent = 'Save to Kevin';
+    btn.querySelector('span').textContent = '🍺 Save to The Alibi';
   } else {
     savedQuotes.push({...currentQuote, savedAt: new Date().toISOString()});
     btn.classList.add('collected');
-    btn.querySelector('span').textContent = 'Saved!';
+    btn.querySelector('span').textContent = '🍺 Saved to The Alibi';
   }
   
   localStorage.setItem('frankQuotes', JSON.stringify(savedQuotes));
@@ -623,7 +622,7 @@ function showSaved() {
   if (savedQuotes.length === 0) {
     list.innerHTML = `
       <p style="text-align: center; color: var(--text-3); padding: 40px;">
-        No quotes saved yet.<br>Go ask Frank for some wisdom.
+        The Alibi is empty.<br>Go ask Frank for some wisdom, then bring it back to the bar.
       </p>
     `;
   } else {
