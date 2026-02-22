@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Gallagher's</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', system-ui, sans-serif; }
+        .character-tab { transition: all 0.2s ease; }
+        .character-tab:hover { background-color: #F4F4F5; }
+        .character-tab.active { background-color: #18181B; color: white; }
+        .app-card { transition: all 0.2s ease; cursor: pointer; }
+        .app-card:hover { transform: translateY(-2px); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #D4D4D8; border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 h-screen overflow-hidden">
+    <div class="flex h-full">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+            <div class="p-6 border-b border-gray-200">
+                <h1 class="text-xl font-bold tracking-tight">The Gallagher's</h1>
+                <p class="text-xs text-gray-500 mt-1">Personal Workspace</p>
+            </div>
+            <nav class="flex-1 overflow-y-auto py-4">
+                <div class="px-3 mb-2"><span class="text-xs font-medium text-gray-400 uppercase tracking-wider px-3">Family</span></div>
+                <div id="character-list" class="space-y-1 px-3"></div>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <div class="max-w-6xl mx-auto p-8">
+                <div class="mb-10">
+                    <h2 id="current-character-name" class="text-3xl font-bold tracking-tight mb-2">Select a Character</h2>
+                    <p id="current-character-desc" class="text-gray-500">Choose a Gallagher to see their tools</p>
+                </div>
+                <div id="app-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- App Container -->
+    <div id="app-container" class="fixed inset-0 bg-gray-50 z-50 hidden">
+        <div class="h-full flex flex-col">
+            <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <button id="back-btn" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
+                    </button>
+                    <h3 id="app-title" class="text-lg font-semibold">App Name</h3>
+                </div>
+                <span id="app-character" class="text-sm text-gray-500 px-3 py-1 bg-gray-100 rounded-full">Character</span>
+            </header>
+            <div id="app-content" class="flex-1 overflow-y-auto p-6"></div>
+        </div>
+    </div>
+
+<script>
+const characters = [
+    { id: 'frank', name: 'Frank', fullName: 'Frank Gallagher', desc: 'Live in the moment, no regrets', color: '#18181B', apps: [{ id: 'nama-ste', name: 'Nama-fucking-ste', desc: 'Frank-style wisdom for breakdown moments', icon: '✦' }, { id: 'icoe', name: 'ICOE', desc: 'In Case of Emergency — 不借钱的生存法则', icon: '🚨' }] },
+    { id: 'kevin', name: 'Kevin', fullName: 'Kevin Ball', desc: 'Simple, direct, always there', color: '#2563EB', apps: [{ id: 'english', name: 'Shameless English', desc: 'Learn from iconic quotes & scenes', icon: '☐' }] },
+    { id: 'carl', name: 'Carl', fullName: 'Carl Gallagher', desc: 'Discipline, justice, law', color: '#DC2626', apps: [{ id: 'fakao', name: '法考宝典', desc: '0基础法考学习助手', icon: '⚖' }] },
+    { id: 'debbie', name: 'Debbie', fullName: 'Debbie Gallagher', desc: 'DIY genius, practical solutions', color: '#EA580C', apps: [{ id: 'dupes', name: '化妆品平替大全', desc: '成分对比分析，大牌平替推荐', icon: '⚗' }] },
+    { id: 'svetlana', name: 'Svetlana', fullName: 'Svetlana', desc: 'Business, hustle, side income', color: '#7C3AED', apps: [{ id: 'hustle', name: '副业管理', desc: 'Track your side businesses', icon: '$' }] }
+];
+
+let currentChar = null;
+const charList = document.getElementById('character-list');
+const charName = document.getElementById('current-character-name');
+const charDesc = document.getElementById('current-character-desc');
+const appGrid = document.getElementById('app-grid');
+const appContainer = document.getElementById('app-container');
+
+function renderChars() {
+    charList.innerHTML = characters.map(c => `
+        <button class="character-tab w-full text-left px-4 py-3 rounded-xl flex items-center gap-3" data-id="${c.id}" onclick="selectChar('${c.id}')">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white" style="background:${c.color}">${c.name[0]}</div>
+            <div><div class="font-medium text-sm">${c.name}</div><div class="text-xs text-gray-400">${c.apps.length} app</div></div>
+        </button>
+    `).join('');
+}
+
+function selectChar(id) {
+    currentChar = characters.find(c => c.id === id);
+    document.querySelectorAll('.character-tab').forEach(t => t.classList.toggle('active', t.dataset.id === id));
+    charName.textContent = currentChar.fullName;
+    charDesc.textContent = currentChar.desc;
+    appGrid.innerHTML = currentChar.apps.map(a => `
+        <div class="app-card bg-white border border-gray-200 rounded-2xl p-6" onclick="openApp('${a.id}')">
+            <div class="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4" style="background:${currentChar.color}15;color:${currentChar.color}">${a.icon}</div>
+            <h3 class="font-semibold text-lg mb-2">${a.name}</h3>
+            <p class="text-sm text-gray-500">${a.desc}</p>
+        </div>
+    `).join('');
+}
+
+function openApp(id) {
+    const app = currentChar.apps.find(a => a.id === id);
+    if (id === 'icoe') {
+        window.location.href = './icoe/index.html';
+        return;
+    }
+    document.getElementById('app-title').textContent = app.name;
+    document.getElementById('app-character').textContent = currentChar.name;
+    document.getElementById('app-content').innerHTML = `<div class="max-w-2xl mx-auto bg-white border border-gray-200 rounded-2xl p-8"><h4 class="text-2xl font-bold mb-4">${app.name}</h4><p class="text-gray-500">App content coming soon...</p></div>`;
+    appContainer.classList.remove('hidden');
+}
+
+document.getElementById('back-btn').onclick = () => appContainer.classList.add('hidden');
+
+renderChars();
+selectChar('frank');
+</script>
+</body>
+</html>

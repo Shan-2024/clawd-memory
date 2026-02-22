@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICOE - In Case of Emergency</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --frank-orange: #C84B26;
+            --frank-orange-light: #FEF3EF;
+            --frank-dark: #1A1A1A;
+            --gray-50: #FAFAFA;
+            --gray-100: #F5F5F5;
+            --gray-200: #E5E5E5;
+            --gray-400: #A3A3A3;
+            --gray-600: #525252;
+            --gray-900: #171717;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: white;
+            color: var(--frank-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--gray-200);
+            background: white;
+        }
+        
+        .header-inner {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            color: var(--frank-orange);
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            font-size: 13px;
+            color: var(--gray-400);
+            margin-top: 4px;
+        }
+        
+        /* Main Content */
+        .main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* Emergency Button */
+        .emergency-section {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        
+        .emergency-btn {
+            background: var(--frank-orange);
+            color: white;
+            border: none;
+            padding: 24px 48px;
+            font-size: 20px;
+            font-weight: 600;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Noto Serif SC', serif;
+            box-shadow: 0 8px 30px rgba(200, 75, 38, 0.3);
+        }
+        
+        .emergency-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 40px rgba(200, 75, 38, 0.4);
+        }
+        
+        .emergency-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .emergency-hint {
+            font-size: 13px;
+            color: var(--gray-400);
+            margin-top: 16px;
+        }
+        
+        /* Frank Quote */
+        .frank-quote {
+            background: var(--gray-50);
+            border-left: 3px solid var(--frank-orange);
+            padding: 16px 20px;
+            margin-bottom: 40px;
+            font-style: italic;
+            color: var(--gray-600);
+            font-size: 14px;
+        }
+        
+        /* Emergency Levels */
+        .levels-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+        
+        .levels-grid {
+            display: grid;
+            gap: 16px;
+        }
+        
+        .level-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .level-card:hover {
+            border-color: var(--frank-orange);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        
+        .level-card.active {
+            border-color: var(--frank-orange);
+            background: var(--frank-orange-light);
+        }
+        
+        .level-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .level-badge {
+            font-size: 20px;
+        }
+        
+        .level-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .level-desc {
+            font-size: 13px;
+            color: var(--gray-400);
+            padding-left: 32px;
+        }
+        
+        /* Solutions Section */
+        .solutions-section {
+            margin-top: 40px;
+            display: none;
+        }
+        
+        .solutions-section.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .solutions-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .solutions-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+        
+        .frank-comment {
+            font-size: 12px;
+            color: var(--gray-400);
+            font-style: italic;
+        }
+        
+        /* Solution Cards */
+        .solution-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .solution-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .solution-card:hover {
+            border-color: var(--frank-orange);
+        }
+        
+        .solution-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .solution-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        .solution-tag {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 100px;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            white-space: nowrap;
+        }
+        
+        .solution-tag.fast {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+        
+        .solution-tag.medium {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+        
+        .solution-desc {
+            font-size: 13px;
+            color: var(--gray-600);
+            margin-bottom: 12px;
+        }
+        
+        .solution-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+        
+        .solution-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* Detail Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 100;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 24px 24px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .modal-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray-400);
+            padding: 4px;
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        .modal-section {
+            margin-bottom: 24px;
+        }
+        
+        .modal-section-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 12px;
+            color: var(--frank-orange);
+        }
+        
+        .modal-text {
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.8;
+        }
+        
+        .modal-list {
+            list-style: none;
+            font-size: 14px;
+        }
+        
+        .modal-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--gray-100);
+            color: var(--gray-600);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .modal-list li:before {
+            content: "→";
+            color: var(--frank-orange);
+            font-weight: bold;
+        }
+        
+        .modal-footer {
+            padding: 0 24px 24px;
+        }
+        
+        .action-btn {
+            width: 100%;
+            background: var(--frank-orange);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* Frank Bottom Quote */
+        .frank-bottom {
+            margin-top: 48px;
+            padding: 24px;
+            background: var(--frank-dark);
+            color: white;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .frank-bottom-text {
+            font-style: italic;
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 8px;
+        }
+        
+        .frank-bottom-name {
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+        
+        /* Responsive */
+        @media (max-width: 640px) {
+            .emergency-btn {
+                padding: 20px 36px;
+                font-size: 18px;
+            }
+            
+            .logo {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <h1 class="logo">ICOE</h1>
+            <p class="subtitle">IN CASE OF EMERGENCY — 不借钱的生存法则</p>
+        </div>
+    </header>
+    
+    <main class="main">
+        <!-- Emergency Button -->
+        <section class="emergency-section">
+            <button class="emergency-btn" onclick="showRandomSolution()">我他妈缺钱了</button>
+            <p class="emergency-hint">点击获取 Frank 的紧急搞钱方案</p>
+        </section>
+        
+        <!-- Frank Quote -->
+        <div class="frank-quote">
+            "借钱？那是你失败的第一步。真正的生存艺术家，懂得把手里的破烂变成现金。"
+        </div>
+        
+        <!-- Emergency Levels -->
+        <h2 class="levels-title">CHOOSE YOUR EMERGENCY LEVEL</h2>
+        <div class="levels-grid">
+            <div class="level-card" data-level="urgent" onclick="selectLevel('urgent')">
+                <div class="level-header">
+                    <span class="level-badge">🔴</span>
+                    <span class="level-name">今天就要</span>
+                </div>
+                <p class="level-desc">24小时内必须到账，火烧眉毛</p>
+            </div>
+            <div class="level-card" data-level="week" onclick="selectLevel('week')">
+                <div class="level-header">
+                    <span class="level-badge">🟡</span>
+                    <span class="level-name">这周要</span>
+                </div>
+                <p class="level-desc">7天内有缓冲，但需要行动</p>
+            </div>
+            <div class="level-card" data-level="plan" onclick="selectLevel('plan')">
+                <div class="level-header">
+                    <span class="level-badge">🟢</span>
+                    <span class="level-name">未雨绸缪</span>
+                </div>
+                <p class="level-desc">30天内规划，避免下次危机</p>
+            </div>
+        </div>
+        
+        <!-- Solutions Section -->
+        <section class="solutions-section" id="solutionsSection">
+            <div class="solutions-header">
+                <h3 class="solutions-title">EMERGENCY PROTOCOLS</h3>
+                <span class="frank-comment">Frank 说：选一个，然后他妈的去做</span>
+            </div>
+            <div class="solution-list" id="solutionList"></div>
+        </section>
+        
+        <!-- Frank Bottom Quote -->
+        <div class="frank-bottom">
+            <p class="frank-bottom-text">"这个世界不会给你施舍。想要钱？去赚。去省。去想办法。<br>向朋友借钱？那只能说明你还不够努力。"</p>
+            <p class="frank-bottom-name">— Frank Gallagher</p>
+        </div>
+    </main>
+    
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">方案详情</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer">
+                <button class="action-btn" id="modalAction">开始执行</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+// Solution Database
+const solutions = {
+    urgent: [
+        {
+            id: 'idle-items',
+            name: '闲置变现闪电战',
+            tag: '当天到账',
+            tagClass: 'fast',
+            desc: '把家里的闲置物品变成现金，24小时内完成交易',
+            time: '2-4小时',
+            effort: '中等',
+            income: '￥100-2000',
+            details: {
+                steps: [
+                    '打开闲鱼/转转，拍摄3-5张清晰照片（光线要好）',
+                    '标题公式：品牌+型号+成色+关键词',
+                    '定价策略：搜索同款，取最低价的85%',
+                    '开启"同城自提"加速交易',
+                    '优先处理：电子产品 > 奢侈品 > 衣服鞋包'
+                ],
+                tips: '别怕麻烦。你现在觉得"以后可能用"的东西，90%你这辈子都不会再碰。卖了就是赚了。',
+                platforms: ['闲鱼', '转转', '爱回收（3C数码）', '多抓鱼（书籍）'],
+                frankQuote: '"我卖过电视、卖过暖气、卖过孩子的玩具。面子？那玩意儿能当饭吃吗？"'
+            }
+        },
+        {
+            id: 'quick-errands',
+            name: '跑腿众包紧急上线',
+            tag: '当天到账',
+            tagClass: 'fast',
+            desc: '注册美团众包、蜂鸟众包，利用空闲时间跑单',
+            time: '3-8小时',
+            effort: '高',
+            income: '￥100-400/天',
+            details: {
+                steps: [
+                    '下载"美团众包"或"蜂鸟众包"APP',
+                    '实名认证（需身份证+健康证，部分地区可先跑后补）',
+                    '装备：电动车/自行车+充电宝+手机支架',
+                    '时段选择：午高峰(11-13点)、晚高峰(17-20点)',
+                    '策略：先接近距离单，熟悉后再接远单'
+                ],
+                tips: '前10单慢慢来，别贪多。熟悉路线后，效率能翻倍。下雨天单价会涨，但要考虑安全。',
+                platforms: ['美团众包', '蜂鸟众包', '闪送', 'UU跑腿'],
+                frankQuote: '"我送过外卖、搬过砖、卖过血。钱就是钱，别管怎么来的，能付账单就行。"'
+            }
+        },
+        {
+            id: 'skill-gigs',
+            name: '技能急单速接',
+            tag: '当天到账',
+            tagClass: 'fast',
+            desc: '把你现有的技能变成紧急服务，当天接单当天交付',
+            time: '2-6小时',
+            effort: '中高',
+            income: '￥200-2000+',
+            details: {
+                steps: [
+                    '盘点你的技能：PPT、剪辑、翻译、设计、咨询、写作...',
+                    '发朋友圈/社群："紧急接X单，今天可交付"',
+                    '上猪八戒/一品威客搜索"加急"需求',
+                    '主动联系老客户："最近有空，有急活找我"',
+                    '在豆瓣小组、小红书搜索"急求"帖子'
+                ],
+                tips: '价格可以比平时高20-30%，因为是加急。但不要狮子大开口，先把现金流跑起来。',
+                platforms: ['猪八戒', '一品威客', '圆领', '电鸭社区', '各类行业微信群'],
+                frankQuote: '"我有嘴，能说话，能忽悠。这就是我的技能。你的技能是什么？去卖啊！"'
+            }
+        },
+        {
+            id: 'advance',
+            name: '预支工具（最后手段）',
+            tag: '即时到账',
+            tagClass: 'fast',
+            desc: '信用卡提现、花呗/借呗，不得已时的选择',
+            time: '即时',
+            effort: '低',
+            income: '看额度',
+            details: {
+                steps: [
+                    '信用卡提现：手续费1%+日息0.05%',
+                    '支付宝借呗：日息0.015%-0.06%',
+                    '微信微粒贷：日息0.02%-0.05%',
+                    '京东金条：类似利率',
+                    '计算好还款日，避免逾期'
+                ],
+                tips: '这是最后的手段。用了之后必须制定严格的还款计划，否则会陷入债务循环。Frank 会告诉你：这不是钱，这是坑。',
+                platforms: ['信用卡', '借呗', '微粒贷', '京东金条'],
+                frankQuote: '"高利贷？我欠过。但记住，借钱只是拖延问题，不是解决问题。你还是要去搞钱。"'
+            }
+        }
+    ],
+    week: [
+        {
+            id: 'freelance',
+            name: 'Freelance 快速启动',
+            tag: '3-7天',
+            tagClass: 'medium',
+            desc: '在短期内接到并完成 freelance 项目',
+            time: '1-2小时/天',
+            effort: '中高',
+            income: '￥500-5000',
+            details: {
+                steps: [
+                    '完善 LinkedIn、脉脉、Boss直聘的 freelance 标签',
+                    '主动出击：每天联系5个潜在客户或猎头',
+                    '低价切入：首单可以给折扣，换好评和案例',
+                    '包装经验：把你工作中的项目转化为服务',
+                    '持续跟进：80%的成交来自第3次联系之后'
+                ],
+                tips: '不要等客户来找你。找客户是销售工作，50%的拒绝是正常的。坚持就是胜利。',
+                platforms: ['LinkedIn', '脉脉', 'Boss直聘', 'Upwork', 'Fiverr'],
+                frankQuote: '"我不在乎被拒绝。我在乎的是，第20次尝试之后，有人说了 yes。"'
+            }
+        },
+        {
+            id: 'network',
+            name: '人脉资源置换',
+            tag: '3-7天',
+            tagClass: 'medium',
+            desc: '不借钱，但利用人脉获取机会和信息',
+            time: '1小时/天',
+            effort: '中等',
+            income: '不确定',
+            details: {
+                steps: [
+                    '列出5个能给你带来机会的人（不是给你钱）',
+                    '发送信息："最近在做X，有合适的项目/人可以推荐吗？"',
+                    '提供价值：你能帮对方什么？信息？介绍？服务？',
+                    '参加行业活动、线上社群，扩大圈子',
+                    '跟进：保持联系，不要只在需要时才出现'
+                ],
+                tips: '关键是"置换"不是"索取"。你先想想能给对方什么，再去开口。',
+                platforms: ['微信', 'LinkedIn', '行业社群', '线下活动'],
+                frankQuote: '"人脉就是钱脉。但记住，人脉是互相利用，不是单向索取。"'
+            }
+        },
+        {
+            id: 'side-hustle',
+            name: '零成本副业冷启动',
+            tag: '7天内',
+            tagClass: 'medium',
+            desc: '从0开始，一周内产生收入的副业项目',
+            time: '2-3小时/天',
+            effort: '高',
+            income: '￥300-2000',
+            details: {
+                steps: [
+                    '选择方向：代购、带货、咨询、内容创作、技能服务',
+                    '最低成本验证：先发个朋友圈/小红书试水',
+                    '获得第一个客户：哪怕不赚钱，先跑通流程',
+                    '复盘优化：哪里卡住了？怎么提高效率？',
+                    '规模化：标准化流程，提高单价或接单量'
+                ],
+                tips: '别想太多，先做起来。完美主义是贫穷的温床。',
+                platforms: ['小红书', '抖音', '朋友圈', '闲鱼', '淘宝'],
+                frankQuote: '"我卖过一切能卖的东西。秘诀就是：别挑，先卖起来。"'
+            }
+        },
+        {
+            id: 'negotiation',
+            name: '谈判争取更好条件',
+            tag: '随时',
+            tagClass: 'medium',
+            desc: '通过谈判提高现有收入，或减少支出',
+            time: '1-2小时',
+            effort: '中等',
+            income: '看情况',
+            details: {
+                steps: [
+                    '薪资谈判：准备你的业绩数据，找老板谈加薪',
+                    '客户谈判：现有客户提价20%的话术',
+                    '费用谈判：房租、服务费、订阅费用的延期/减免申请',
+                    '分期方案：大额账单的延期付款谈判',
+                    '账期谈判：供应商/客户的付款条件调整'
+                ],
+                tips: '谈判不是对抗，是寻找双赢。带着解决方案去，而不是只带着问题。',
+                platforms: ['直接沟通', '邮件', '微信'],
+                frankQuote: '"我从来没拿到过我应得的，但我总是能拿到我谈判来的。你不开口，就什么都没有。"'
+            }
+        }
+    ],
+    plan: [
+        {
+            id: 'income-analysis',
+            name: '收入结构诊断',
+            tag: '长期',
+            tagClass: '',
+            desc: '分析现有收入来源，规划多元化收入',
+            time: '3-4小时',
+            effort: '中等',
+            income: '长期收益',
+            details: {
+                steps: [
+                    '列出所有收入来源：主业、副业、投资、被动收入',
+                    '评估风险：如果主业断了，你能撑多久？',
+                    '设定目标：3个月内新增1个收入来源',
+                    '行动计划：每周投入X小时，在Y日期前实现Z目标',
+                    '定期复盘：每月检查进度，调整策略'
+                ],
+                tips: '不要把所有鸡蛋放在一个篮子里。Gallagher 家族能活下去，靠的是多点开花。',
+                platforms: ['Excel', 'Notion', '各种记账APP'],
+                frankQuote: '"我从来没只有一个收入来源。今天有，明天可能就没有了。永远要有 Plan B、Plan C。"'
+            }
+        },
+        {
+            id: 'cost-cutting',
+            name: '节流大作战',
+            tag: '长期',
+            tagClass: '',
+            desc: '无痛减少30%支出的系统化方案',
+            time: '2-3小时',
+            effort: '低',
+            income: '省钱=赚钱',
+            details: {
+                steps: [
+                    '订阅清理：列出所有会员，取消3个月没用的',
+                    '账单审计：检查信用卡/支付宝账单，找出不必要支出',
+                    '替代方案：高端消费→平价替代，外卖→自己做饭',
+                    '谈判降费：话费、宽带、保险的重新谈判',
+                    '设定预算：每月固定支出上限，严格执行'
+                ],
+                tips: '省钱不是抠门，是优化。每一块钱你不花，就是一块钱你赚到的。',
+                platforms: ['记账APP', '银行APP', '运营商APP'],
+                frankQuote: '"我能在10块钱活一周。不是因为我喜欢，是因为我知道钱的价值。"'
+            }
+        },
+        {
+            id: 'skill-investment',
+            name: '技能投资计划',
+            tag: '长期',
+            tagClass: '',
+            desc: '投资自己，提高未来赚钱能力',
+            time: '持续',
+            effort: '高',
+            income: '长期收益',
+            details: {
+                steps: [
+                    '识别高价值技能：AI工具、数据分析、销售、谈判、英语',
+                    '制定学习计划：每天/每周投入固定时间',
+                    '实践验证：学完就用，用项目来巩固',
+                    '变现路径：如何把这个技能变成收入？',
+                    '持续迭代：技能要更新，不能一劳永逸'
+                ],
+                tips: '投资自己是回报最高的投资。但不要只学不练，更不要只练不卖。',
+                platforms: ['Coursera', 'Udemy', 'B站', '得到', '各类书籍'],
+                frankQuote: '"我读过书，虽然没读完。知识就是力量，但赚钱的知识才是有用的知识。"'
+            }
+        },
+        {
+            id: 'emergency-fund',
+            name: '应急基金建立',
+            tag: '长期',
+            tagClass: '',
+            desc: '建立3-6个月生活费的应急储备',
+            time: '持续',
+            effort: '低',
+            income: '安全感',
+            details: {
+                steps: [
+                    '计算月支出：房租+吃饭+交通+必要开销',
+                    '设定目标：3-6个月支出总额',
+                    '自动储蓄：工资到账自动转存固定金额',
+                    '选择工具：货币基金、短债基金（流动性+收益）',
+                    '专款专用：绝对不动，除非是 true emergency'
+                ],
+                tips: '应急基金是给你底气的。有了它，你就不用向任何人低头。',
+                platforms: ['余额宝', '理财通', '货币基金'],
+                frankQuote: '"我从来没存过钱，所以我一辈子都在挣扎。聪明点，别学我。"'
+            }
+        }
+    ]
+};
+
+// State
+let currentLevel = null;
+
+// Functions
+function selectLevel(level) {
+    currentLevel = level;
+    
+    // Update UI
+    document.querySelectorAll('.level-card').forEach(card => {
+        card.classList.toggle('active', card.dataset.level === level);
+    });
+    
+    // Show solutions
+    const section = document.getElementById('solutionsSection');
+    const list = document.getElementById('solutionList');
+    
+    list.innerHTML = solutions[level].map(s => `
+        <div class="solution-card" onclick="showSolutionDetail('${level}', '${s.id}')">
+            <div class="solution-header">
+                <h4 class="solution-name">${s.name}</h4>
+                <span class="solution-tag ${s.tagClass}">${s.tag}</span>
+            </div>
+            <p class="solution-desc">${s.desc}</p>
+            <div class="solution-meta">
+                <span>⏱ ${s.time}</span>
+                <span>⚡ ${s.effort}</span>
+                <span>💰 ${s.income}</span>
+            </div>
+        </div>
+    `).join('');
+    
+    section.classList.add('show');
+    section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function showRandomSolution() {
+    // Randomly pick a level and solution
+    const levels = ['urgent', 'week', 'plan'];
+    const randomLevel = levels[Math.floor(Math.random() * levels.length)];
+    const randomSolution = solutions[randomLevel][Math.floor(Math.random() * solutions[randomLevel].length)];
+    
+    showSolutionDetail(randomLevel, randomSolution.id);
+}
+
+function showSolutionDetail(level, solutionId) {
+    const solution = solutions[level].find(s => s.id === solutionId);
+    if (!solution) return;
+    
+    document.getElementById('modalTitle').textContent = solution.name;
+    document.getElementById('modalBody').innerHTML = `
+        <div class="modal-section">
+            <h4 class="modal-section-title">执行步骤</h4>
+            <ul class="modal-list">
+                ${solution.details.steps.map(step => `<li>${step}</li>`).join('')}
+            </ul>
+        </div>
+        <div class="modal-section">
+            <h4 class="modal-section-title">Frank 的提醒</h4>
+            <p class="modal-text">${solution.details.tips}</p>
+        </div>
+        <div class="modal-section">
+            <h4 class="modal-section-title">推荐平台</h4>
+            <p class="modal-text">${solution.details.platforms.join('、')}</p>
+        </div>
+        <div class="modal-section" style="background: var(--gray-50); padding: 16px; border-radius: 8px; border-left: 3px solid var(--frank-orange);">
+            <p class="modal-text" style="font-style: italic; color: var(--gray-600);">"${solution.details.frankQuote}"</p>
+            <p style="font-size: 12px; color: var(--gray-400); margin-top: 8px;">— Frank Gallagher</p>
+        </div>
+    `;
+    
+    document.getElementById('modal').classList.add('show');
+}
+
+function closeModal(event) {
+    if (!event || event.target.id === 'modal') {
+        document.getElementById('modal').classList.remove('show');
+    }
+}
+
+// Close modal on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeModal();
+    }
+});
+</script>
+</body>
+</html>
