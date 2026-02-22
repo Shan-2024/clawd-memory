@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Gallagher's</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --coal: #1a1a1a;
+            --soot: #0d0d0d;
+            --rust: #8b4513;
+            --beer: #d4a574;
+            --caution: #c41e3a;
+            --paper: #f5f0e6;
+            --concrete: #4a4a4a;
+            --grime: #2d2d2d;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: var(--soot);
+            color: var(--paper);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* 左侧菜单栏 */
+        .sidebar {
+            width: 220px;
+            background: var(--coal);
+            border-right: 3px solid var(--rust);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0,0,0,0.1) 2px,
+                    rgba(0,0,0,0.1) 4px
+                );
+            pointer-events: none;
+        }
+
+        .logo {
+            padding: 30px 20px;
+            border-bottom: 2px solid var(--rust);
+            text-align: center;
+        }
+
+        .logo h1 {
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            color: var(--caution);
+            text-transform: uppercase;
+        }
+
+        .logo span {
+            font-size: 10px;
+            color: var(--concrete);
+            letter-spacing: 1px;
+        }
+
+        .character-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+
+        .character-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .character-item:hover {
+            background: var(--grime);
+            border-left-color: var(--beer);
+        }
+
+        .character-item.active {
+            background: var(--grime);
+            border-left-color: var(--caution);
+        }
+
+        .character-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .character-name {
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* 右侧内容区 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--soot);
+        }
+
+        .header {
+            height: 70px;
+            background: var(--coal);
+            border-bottom: 2px solid var(--rust);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .header-subtitle {
+            font-size: 11px;
+            color: var(--concrete);
+            letter-spacing: 1px;
+        }
+
+        /* 应用矩阵 */
+        .app-grid {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 25px;
+        }
+
+        .app-card {
+            aspect-ratio: 1;
+            background: var(--coal);
+            border: 2px solid var(--concrete);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--character-color, var(--rust));
+        }
+
+        .app-card:hover {
+            border-color: var(--beer);
+            transform: translateY(-4px);
+        }
+
+        .app-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .app-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: var(--paper);
+        }
+
+        .app-name {
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-align: center;
+            color: var(--paper);
+        }
+
+        .app-desc {
+            font-size: 10px;
+            color: var(--concrete);
+            text-align: center;
+            max-width: 120px;
+        }
+
+        /* 应用详情页 */
+        .app-detail {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+        }
+
+        .app-detail.active {
+            display: flex;
+        }
+
+        .detail-header {
+            height: 60px;
+            background: var(--coal);
+            border-bottom: 2px solid var(--rust);
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            gap: 20px;
+        }
+
+        .back-btn {
+            padding: 8px 16px;
+            background: var(--grime);
+            border: 1px solid var(--concrete);
+            color: var(--paper);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .back-btn:hover {
+            border-color: var(--beer);
+        }
+
+        .detail-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--coal);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--rust);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧菜单 -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>The Gallagher's</h1>
+                <span>SOUTH SIDE CHICAGO</span>
+            </div>
+            <nav class="character-list">
+                <div class="character-item active" data-character="frank">
+                    <div class="character-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <rect x="6" y="4" width="20" height="24" rx="2" stroke="#d4a574" stroke-width="2"/>
+                            <line x1="10" y1="10" x2="22" y2="10" stroke="#d4a574" stroke-width="2"/>
+                            <line x1="10" y1="16" x2="18" y2="16" stroke="#d4a574" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <span class="character-name">FRANK</span>
+                </div>
+                <div class="character-item" data-character="carl">
+                    <div class="character-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path d="M16 4L20 12H28L22 18L24 26L16 20L8 26L10 18L4 12H12L16 4Z" stroke="#c41e3a" stroke-width="2" fill="none"/>
+                        </svg>
+                    </div>
+                    <span class="character-name">CARL</span>
+                </div>
+                <div class="character-item" data-character="debbie">
+                    <div class="character-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <circle cx="16" cy="12" r="6" stroke="#f5f0e6" stroke-width="2"/>
+                            <path d="M8 28C8 22 12 18 16 18C20 18 24 22 24 28" stroke="#f5f0e6" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <span class="character-name">DEBBIE</span>
+                </div>
+                <div class="character-item" data-character="kevin">
+                    <div class="character-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <rect x="8" y="6" width="16" height="20" rx="2" stroke="#8b4513" stroke-width="2"/>
+                            <circle cx="16" cy="14" r="4" stroke="#8b4513" stroke-width="2"/>
+                            <path d="M12 22H20" stroke="#8b4513" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <span class="character-name">KEVIN</span>
+                </div>
+                <div class="character-item" data-character="mickey">
+                    <div class="character-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <rect x="6" y="10" width="20" height="16" rx="2" stroke="#4a4a4a" stroke-width="2"/>
+                            <circle cx="12" cy="18" r="2" fill="#4a4a4a"/>
+                            <circle cx="20" cy="18" r="2" fill="#4a4a4a"/>
+                            <line x1="10" y1="26" x2="22" y2="26" stroke="#4a4a4a" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <span class="character-name">MICKEY</span>
+                </div>
+                <div class="character-item" data-character="fiona">
+                    <div class="character-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path d="M8 28V14L16 8L24 14V28" stroke="#c41e3a" stroke-width="2"/>
+                            <rect x="13" y="18" width="6" height="10" stroke="#c41e3a" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <span class="character-name">FIONA</span>
+                </div>
+                <div class="character-item" data-character="ian">
+                    <div class="character-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path d="M16 4V28M8 12L16 4L24 12" stroke="#d4a574" stroke-width="2"/>
+                            <circle cx="16" cy="20" r="4" stroke="#d4a574" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <span class="character-name">IAN</span>
+                </div>
+                <div class="character-item" data-character="lip">
+                    <div class="character-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <rect x="6" y="4" width="20" height="24" stroke="#f5f0e6" stroke-width="2"/>
+                            <line x1="10" y1="8" x2="22" y2="8" stroke="#f5f0e6" stroke-width="2"/>
+                            <path d="M10 14H14V20H10V14Z" stroke="#f5f0e6" stroke-width="2"/>
+                            <path d="M18 14H22V24H18V14Z" stroke="#f5f0e6" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <span class="character-name">LIP</span>
+                </div>
+                <div class="character-item" data-character="v">
+                    <div class="character-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path d="M8 6L16 26L24 6" stroke="#c41e3a" stroke-width="2"/>
+                            <line x1="10" y1="12" x2="22" y2="12" stroke="#c41e3a" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <span class="character-name">V</span>
+                </div>
+                <div class="character-item" data-character="svetlana">
+                    <div class="character-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <rect x="6" y="8" width="20" height="16" rx="2" stroke="#ffd700" stroke-width="2"/>
+                            <circle cx="12" cy="16" r="2" fill="#ffd700"/>
+                            <circle cx="20" cy="16" r="2" fill="#ffd700"/>
+                            <path d="M16 24V28M12 28H20" stroke="#ffd700" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <span class="character-name">SVETLANA</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 右侧内容 -->
+        <main class="main-content">
+            <!-- 应用矩阵视图 -->
+            <div class="view-grid" id="gridView">
+                <header class="header">
+                    <div>
+                        <div class="header-title" id="currentChar">FRANK GALLAGHER</div>
+                        <div class="header-subtitle" id="currentQuote">"Live in the fucking moment"</div>
+                    </div>
+                </header>
+                <div class="app-grid" id="appGrid">
+                    <!-- 应用卡片由 JS 生成 -->
+                </div>
+            </div>
+
+            <!-- 应用详情视图 -->
+            <div class="app-detail" id="detailView">
+                <div class="detail-header">
+                    <button class="back-btn" onclick="backToGrid()">← BACK</button>
+                    <span id="detailTitle">APP NAME</span>
+                </div>
+                <div class="detail-content" id="detailContent">
+                    <!-- 应用内容 -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 角色数据
+        const characters = {
+            frank: {
+                name: 'FRANK GALLAGHER',
+                quote: '"Live in the fucking moment"',
+                color: '#d4a574',
+                apps: [
+                    { 
+                        id: 'nama-ste', 
+                        name: 'NAMA-FUCKING-STE', 
+                        desc: 'Anti-anxiety daily quotes',
+                        icon: 'beer'
+                    },
+                    { 
+                        id: 'fuck-it', 
+                        name: 'FUCK IT BUTTON', 
+                        desc: 'Destroy your to-do list',
+                        icon: 'trash'
+                    },
+                    { 
+                        id: 'survival', 
+                        name: 'SURVIVAL GUIDE', 
+                        desc: 'Street wisdom tips',
+                        icon: 'book'
+                    }
+                ]
+            },
+            carl: {
+                name: 'CARL GALLAGHER',
+                quote: '"I want to be the good guy"',
+                color: '#c41e3a',
+                apps: [
+                    { 
+                        id: 'law-academy', 
+                        name: 'LAW ACADEMY', 
+                        desc: '0基础法考通关',
+                        icon: 'badge'
+                    },
+                    { 
+                        id: 'justice', 
+                        name: 'JUSTICE METER', 
+                        desc: 'Track your righteousness',
+                        icon: 'scale'
+                    }
+                ]
+            },
+            debbie: {
+                name: 'DEBBIE GALLAGHER',
+                quote: '"I\'m a resourceful woman"',
+                color: '#f5f0e6',
+                apps: [
+                    { 
+                        id: 'dupes', 
+                        name: 'DUPES & DUPES', 
+                        desc: '化妆品平替大全',
+                        icon: 'cosmetic'
+                    },
+                    { 
+                        id: 'diy', 
+                        name: 'DIY QUEEN', 
+                        desc: 'Fix it yourself',
+                        icon: 'tools'
+                    }
+                ]
+            },
+            kevin: {
+                name: 'KEVIN BALL',
+                quote: '"I\'m a grower, not a shower"',
+                color: '#8b4513',
+                apps: [
+                    { 
+                        id: 'alibi-english', 
+                        name: 'ALIBI ENGLISH', 
+                        desc: 'Learn from screenshots',
+                        icon: 'glasses'
+                    },
+                    { 
+                        id: 'gym', 
+                        name: 'THE KEG', 
+                        desc: 'Workout tracker',
+                        icon: 'dumbbell'
+                    }
+                ]
+            },
+            mickey: {
+                name: 'MICKEY MILKOVICH',
+                quote: '"I\'m not fucking retarded"',
+                color: '#4a4a4a',
+                apps: [
+                    { 
+                        id: 'hard-mode', 
+                        name: 'HARD MODE', 
+                        desc: 'Aggressive todo list',
+                        icon: 'fist'
+                    },
+                    { 
+                        id: 'protection', 
+                        name: 'GUARD DOG', 
+                        desc: 'Focus protection',
+                        icon: 'shield'
+                    }
+                ]
+            },
+            fiona: {
+                name: 'FIONA GALLAGHER',
+                quote: '"I got this"',
+                color: '#c41e3a',
+                apps: [
+                    { 
+                        id: 'cleanup', 
+                        name: 'MESS CLEANER', 
+                        desc: 'Chaos management',
+                        icon: 'broom'
+                    },
+                    { 
+                        id: 'budget', 
+                        name: 'FAMILY BUDGET', 
+                        desc: 'Financial tracking',
+                        icon: 'money'
+                    }
+                ]
+            },
+            ian: {
+                name: 'IAN GALLAGHER',
+                quote: '"I\'m not my disease"',
+                color: '#d4a574',
+                apps: [
+                    { 
+                        id: 'firehouse', 
+                        name: 'FIREHOUSE', 
+                        desc: 'Training & discipline',
+                        icon: 'fire'
+                    },
+                    { 
+                        id: 'stability', 
+                        name: 'STABLE DAYS', 
+                        desc: 'Routine tracker',
+                        icon: 'calendar'
+                    }
+                ]
+            },
+            lip: {
+                name: 'PHILLIP GALLAGHER',
+                quote: '"I\'m a genius"',
+                color: '#f5f0e6',
+                apps: [
+                    { 
+                        id: 'code-lab', 
+                        name: 'CODE LAB', 
+                        desc: 'Problem solving',
+                        icon: 'code'
+                    },
+                    { 
+                        id: 'sober', 
+                        name: 'SOBER COUNT', 
+                        desc: 'Days of clarity',
+                        icon: 'clock'
+                    }
+                ]
+            },
+            v: {
+                name: 'VERONICA FISHER',
+                quote: '"I do what I want"',
+                color: '#c41e3a',
+                apps: [
+                    { 
+                        id: 'hustle', 
+                        name: 'SIDE HUSTLE', 
+                        desc: 'Money making ideas',
+                        icon: 'dollar'
+                    },
+                    { 
+                        id: 'fuck-you', 
+                        name: 'FUCK YOU MONEY', 
+                        desc: 'Financial freedom calc',
+                        icon: 'crown'
+                    }
+                ]
+            },
+            svetlana: {
+                name: 'SVETLANA',
+                quote: '"I make money, you make problems"',
+                color: '#ffd700',
+                apps: [
+                    { 
+                        id: 'business', 
+                        name: 'BUSINESS EMPIRE', 
+                        desc: '副业项目管理',
+                        icon: 'chart'
+                    },
+                    { 
+                        id: 'side-income', 
+                        name: 'SIDE INCOME', 
+                        desc: '赚外快追踪器',
+                        icon: 'cash'
+                    },
+                    { 
+                        id: 'management', 
+                        name: 'MANAGEMENT', 
+                        desc: '人员与资源管理',
+                        icon: 'people'
+                    }
+                ]
+            }
+        };
+
+        // 图标 SVG
+        const icons = {
+            beer: `<svg viewBox="0 0 60 60"><rect x="15" y="10" width="24" height="40" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><rect x="39" y="18" width="8" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><line x1="19" y1="18" x2="35" y2="18" stroke="currentColor" stroke-width="2"/></svg>`,
+            trash: `<svg viewBox="0 0 60 60"><rect x="18" y="20" width="24" height="32" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><line x1="12" y1="20" x2="48" y2="20" stroke="currentColor" stroke-width="2"/><line x1="24" y1="12" x2="24" y2="8" stroke="currentColor" stroke-width="2"/><line x1="36" y1="12" x2="36" y2="8" stroke="currentColor" stroke-width="2"/><line x1="24" y1="8" x2="36" y2="8" stroke="currentColor" stroke-width="2"/></svg>`,
+            book: `<svg viewBox="0 0 60 60"><rect x="12" y="8" width="36" height="44" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><line x1="20" y1="16" x2="40" y2="16" stroke="currentColor" stroke-width="2"/><line x1="20" y1="24" x2="40" y2="24" stroke="currentColor" stroke-width="2"/><line x1="20" y1="32" x2="35" y2="32" stroke="currentColor" stroke-width="2"/></svg>`,
+            badge: `<svg viewBox="0 0 60 60"><path d="M30 8L36 22H50L39 32L43 46L30 38L17 46L21 32L10 22H24L30 8Z" stroke="currentColor" stroke-width="2" fill="none"/></svg>`,
+            scale: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" stroke="currentColor" stroke-width="2" fill="none"/><line x1="30" y1="10" x2="30" y2="30" stroke="currentColor" stroke-width="2"/><circle cx="30" cy="30" r="6" stroke="currentColor" stroke-width="2" fill="none"/></svg>`,
+            cosmetic: `<svg viewBox="0 0 60 60"><circle cx="30" cy="20" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path d="M20 35C20 30 25 28 30 28C35 28 40 30 40 35V52H20V35Z" stroke="currentColor" stroke-width="2" fill="none"/></svg>`,
+            tools: `<svg viewBox="0 0 60 60"><rect x="12" y="25" width="36" height="8" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="18" cy="42" r="6" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="42" cy="42" r="6" stroke="currentColor" stroke-width="2" fill="none"/></svg>`,
+            glasses: `<svg viewBox="0 0 60 60"><circle cx="20" cy="28" r="10" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="40" cy="28" r="10" stroke="currentColor" stroke-width="2" fill="none"/><line x1="30" y1="28" x2="30" y2="28" stroke="currentColor" stroke-width="2"/></svg>`,
+            dumbbell: `<svg viewBox="0 0 60 60"><rect x="8" y="24" width="10" height="12" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><rect x="42" y="24" width="10" height="12" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><line x1="18" y1="30" x2="42" y2="30" stroke="currentColor" stroke-width="3"/></svg>`,
+            fist: `<svg viewBox="0 0 60 60"><rect x="18" y="20" width="24" height="28" rx="4" stroke="currentColor" stroke-width="2" fill="none"/><line x1="22" y1="20" x2="22" y2="10" stroke="currentColor" stroke-width="3"/><line x1="30" y1="20" x2="30" y2="8" stroke="currentColor" stroke-width="3"/><line x1="38" y1="20" x2="38" y2="10" stroke="currentColor" stroke-width="3"/></svg>`,
+            shield: `<svg viewBox="0 0 60 60"><path d="M30 8L46 16V30C46 40 30 50 30 50C30 50 14 40 14 30V16L30 8Z" stroke="currentColor" stroke-width="2" fill="none"/></svg>`,
+            broom: `<svg viewBox="0 0 60 60"><line x1="30" y1="8" x2="20" y2="40" stroke="currentColor" stroke-width="3"/><path d="M12 40H28L26 52H14L12 40Z" stroke="currentColor" stroke-width="2" fill="none"/></svg>`,
+            money: `<svg viewBox="0 0 60 60"><rect x="10" y="18" width="40" height="24" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="30" cy="30" r="8" stroke="currentColor" stroke-width="2" fill="none"/><text x="30" y="34" text-anchor="middle" font-size="12" fill="currentColor">$</text></svg>`,
+            fire: `<svg viewBox="0 0 60 60"><path d="M30 8C30 8 18 20 18 32C18 42 26 50 30 52C34 50 42 42 42 32C42 20 30 8 30 8Z" stroke="currentColor" stroke-width="2" fill="none"/><path d="M30 20C30 20 24 28 24 34C24 40 28 44 30 46C32 44 36 40 36 34C36 28 30 20 30 20Z" stroke="currentColor" stroke-width="2" fill="none"/></svg>`,
+            calendar: `<svg viewBox="0 0 60 60"><rect x="10" y="14" width="40" height="38" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><line x1="10" y1="24" x2="50" y2="24" stroke="currentColor" stroke-width="2"/><line x1="20" y1="8" x2="20" y2="18" stroke="currentColor" stroke-width="2"/><line x1="40" y1="8" x2="40" y2="18" stroke="currentColor" stroke-width="2"/></svg>`,
+            code: `<svg viewBox="0 0 60 60"><polyline points="18,22 10,30 18,38" stroke="currentColor" stroke-width="2" fill="none"/><polyline points="42,22 50,30 42,38" stroke="currentColor" stroke-width="2" fill="none"/><line x1="34" y1="18" x2="26" y2="42" stroke="currentColor" stroke-width="2"/></svg>`,
+            clock: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" stroke="currentColor" stroke-width="2" fill="none"/><line x1="30" y1="30" x2="30" y2="18" stroke="currentColor" stroke-width="2"/><line x1="30" y1="30" x2="40" y2="30" stroke="currentColor" stroke-width="2"/></svg>`,
+            dollar: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" stroke="currentColor" stroke-width="2" fill="none"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="currentColor">$</text></svg>`,
+            crown: `<svg viewBox="0 0 60 60"><path d="M10 40L18 20L30 30L42 20L50 40H10Z" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="18" cy="18" r="3" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="30" cy="25" r="3" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="42" cy="18" r="3" stroke="currentColor" stroke-width="2" fill="none"/></svg>`,
+            chart: `<svg viewBox="0 0 60 60"><rect x="10" y="35" width="10" height="17" stroke="currentColor" stroke-width="2" fill="none"/><rect x="25" y="20" width="10" height="32" stroke="currentColor" stroke-width="2" fill="none"/><rect x="40" y="8" width="10" height="44" stroke="currentColor" stroke-width="2" fill="none"/></svg>`,
+            cash: `<svg viewBox="0 0 60 60"><rect x="8" y="20" width="44" height="20" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="30" cy="30" r="6" stroke="currentColor" stroke-width="2" fill="none"/></svg>`,
+            people: `<svg viewBox="0 0 60 60"><circle cx="20" cy="16" r="6" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="40" cy="16" r="6" stroke="currentColor" stroke-width="2" fill="none"/><path d="M10 40C10 32 14 26 20 26C26 26 30 32 30 40" stroke="currentColor" stroke-width="2" fill="none"/><path d="M30 40C30 32 34 26 40 26C46 26 50 32 50 40" stroke="currentColor" stroke-width="2" fill="none"/></svg>`
+        };
+
+        let currentCharacter = 'frank';
+
+        // 初始化
+        function init() {
+            renderApps(currentCharacter);
+            setupEventListeners();
+        }
+
+        // 渲染应用网格
+        function renderApps(charId) {
+            const char = characters[charId];
+            document.getElementById('currentChar').textContent = char.name;
+            document.getElementById('currentQuote').textContent = char.quote;
+            
+            const grid = document.getElementById('appGrid');
+            grid.innerHTML = '';
+            
+            char.apps.forEach(app => {
+                const card = document.createElement('div');
+                card.className = 'app-card';
+                card.style.setProperty('--character-color', char.color);
+                card.onclick = () => openApp(charId, app.id);
+                
+                card.innerHTML = `
+                    <div class="app-icon">${icons[app.icon] || icons.beer}</div>
+                    <div class="app-name">${app.name}</div>
+                    <div class="app-desc">${app.desc}</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // 设置事件监听
+        function setupEventListeners() {
+            document.querySelectorAll('.character-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.character-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    currentCharacter = item.dataset.character;
+                    renderApps(currentCharacter);
+                });
+            });
+        }
+
+        // 打开应用
+        function openApp(charId, appId) {
+            const char = characters[charId];
+            const app = char.apps.find(a => a.id === appId);
+            
+            document.getElementById('gridView').style.display = 'none';
+            document.getElementById('detailView').classList.add('active');
+            document.getElementById('detailTitle').textContent = app.name;
+            
+            // 这里可以根据不同应用渲染不同内容
+            document.getElementById('detailContent').innerHTML = `
+                <div style="text-align: center; padding: 60px; color: var(--concrete);">
+                    <div style="width: 100px; height: 100px; margin: 0 auto 30px;">${icons[app.icon]}</div>
+                    <h2 style="color: var(--paper); margin-bottom: 20px;">${app.name}</h2>
+                    <p>${app.desc}</p>
+                    <p style="margin-top: 40px; font-size: 12px;">[ Application under construction ]</p>
+                </div>
+            `;
+        }
+
+        // 返回网格
+        function backToGrid() {
+            document.getElementById('detailView').classList.remove('active');
+            document.getElementById('gridView').style.display = 'flex';
+        }
+
+        // 启动
+        init();
+    </script>
+</body>
+</html>

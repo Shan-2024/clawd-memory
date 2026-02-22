@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nama-fucking-ste | Frank Gallagher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --bg: #FAFAF9;
+      --bg-2: #FFFFFF;
+      --bg-3: #F5F5F4;
+      --text: #1C1917;
+      --text-2: #57534E;
+      --text-3: #A8A29E;
+      --accent: #C84B26;
+      --border: rgba(28,25,23,0.08);
+      --border-hi: rgba(28,25,23,0.15);
+    }
+    
+    html, body {
+      min-height: 100%;
+      font-family: 'Space Grotesk', 'Noto Serif SC', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    
+    .layout {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    
+    /* 顶部导航 */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 48px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text-3);
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    
+    .back-link:hover { color: var(--accent); }
+    
+    .app-brand {
+      text-align: right;
+    }
+    
+    .app-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      letter-spacing: 3px;
+      color: var(--text);
+    }
+    
+    .app-by {
+      font-size: 11px;
+      color: var(--text-3);
+      letter-spacing: 1px;
+    }
+    
+    /* 主卡片 */
+    .main-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+    }
+    
+    /* Frank 头部 */
+    .frank-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 40px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .frank-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #E7E5E4 0%, #D6D3D1 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      color: var(--accent);
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+    }
+    
+    .frank-avatar.talking {
+      animation: shake 0.3s ease-in-out;
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-5deg); }
+      75% { transform: rotate(5deg); }
+    }
+    
+    .frank-info h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+    
+    .frank-info p {
+      font-size: 14px;
+      color: var(--text-2);
+      font-style: italic;
+    }
+    
+    /* 语录卡片 */
+    .quote-card {
+      background: var(--bg-3);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 32px;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .quote-card.empty {
+      align-items: center;
+      justify-content: center;
+      color: var(--text-3);
+      text-align: center;
+    }
+    
+    .quote-card.empty::before {
+      content: '"';
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 120px;
+      color: var(--border-hi);
+      position: absolute;
+      top: 20px;
+      left: 32px;
+      line-height: 1;
+    }
+    
+    .quote-en {
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+    
+    .quote-cn {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text-2);
+    }
+    
+    .quote-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .quote-tag {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--accent);
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border: 1px solid rgba(200,75,38,0.2);
+      border-radius: 100px;
+    }
+    
+    /* 操作按钮组 */
+    .actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background: var(--text);
+      color: #fff;
+      flex: 1;
+      justify-content: center;
+    }
+    
+    .btn-primary:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(200,75,38,0.2);
+    }
+    
+    .btn-secondary {
+      background: var(--bg-3);
+      color: var(--text-2);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--bg-2);
+      border-color: var(--border-hi);
+    }
+    
+    .btn-secondary.collected {
+      background: rgba(200,75,38,0.1);
+      color: var(--accent);
+      border-color: rgba(200,75,38,0.3);
+    }
+    
+    /* 收藏统计 */
+    .stats-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .stats-info h3 {
+      font-size: 13px;
+      color: var(--text-3);
+      margin-bottom: 4px;
+    }
+    
+    .stats-info .number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      color: var(--accent);
+    }
+    
+    .view-saved-btn {
+      padding: 12px 24px;
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .view-saved-btn:hover {
+      background: var(--bg-2);
+      border-color: var(--border-hi);
+    }
+    
+    /* 弹窗 */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(28,25,23,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 24px;
+    }
+    
+    .modal-overlay.show { display: flex; }
+    
+    .modal {
+      background: var(--bg-2);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 2px;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: var(--text-3);
+      line-height: 1;
+    }
+    
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      max-height: 60vh;
+    }
+    
+    .saved-item {
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .saved-item-en {
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    
+    .saved-item-cn {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    
+    .saved-item-tag {
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    
+    /* The Alibi 酒吧场景 */
+    .alibi-wall {
+      background: linear-gradient(180deg, #2A231A 0%, #1A1610 100%);
+      border-radius: 12px;
+      padding: 24px;
+      min-height: 300px;
+    }
+    
+    .alibi-sign {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid rgba(184,146,74,0.3);
+    }
+    
+    .alibi-sign h4 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      color: #B8924A;
+      letter-spacing: 4px;
+    }
+    
+    .alibi-sign p {
+      font-size: 11px;
+      color: #7A5E2A;
+      letter-spacing: 2px;
+    }
+    
+    .drink-menu {
+      display: grid;
+      gap: 16px;
+    }
+    
+    .drink-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(184,146,74,0.2);
+      border-radius: 8px;
+      padding: 20px;
+      position: relative;
+    }
+    
+    .drink-item::before {
+      content: '🍺';
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      background: #2A231A;
+      padding: 0 8px;
+      font-size: 14px;
+    }
+    
+    .drink-quote {
+      font-size: 15px;
+      font-weight: 500;
+      color: #ECD8B4;
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+    
+    .drink-translation {
+      font-size: 13px;
+      color: #9A8268;
+      margin-bottom: 12px;
+    }
+    
+    .drink-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .drink-type {
+      font-size: 10px;
+      color: #C84B26;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid rgba(200,75,38,0.3);
+      border-radius: 100px;
+    }
+    
+    .drink-play {
+      background: none;
+      border: none;
+      color: #B8924A;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .alibi-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: #7A5E2A;
+    }
+    
+    .alibi-empty .beer-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    
+    /* 响应式 */
+    @media (max-width: 640px) {
+      .main-card { padding: 24px; }
+      .frank-header { flex-direction: column; text-align: center; }
+      .quote-card { padding: 24px; }
+      .actions { flex-direction: column; }
+      .btn { width: 100%; justify-content: center; }
+    }
+    /* 深夜模式 */
+    body.late-night {
+      background: #0C0A08;
+    }
+    
+    body.late-night .layout,
+    body.late-night .main-card,
+    body.late-night .stats-card {
+      background: #1A1610;
+      color: #ECD8B4;
+      border-color: rgba(184,146,74,0.1);
+    }
+    
+    body.late-night .quote-card {
+      background: #131008;
+    }
+    
+    body.late-night .frank-info h2,
+    body.late-night .quote-en {
+      color: #ECD8B4;
+    }
+    
+    body.late-night .quote-cn,
+    body.late-night .frank-info p {
+      color: #9A8268;
+    }
+    
+    body.late-night .btn-secondary {
+      background: #221C14;
+      border-color: rgba(184,146,74,0.2);
+      color: #9A8268;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <!-- 顶部导航 -->
+    <div class="header">
+      <a href="index.html" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to The Gallagher's
+      </a>
+      <div class="app-brand">
+        <div class="app-name">NAMA-FUCKING-STE</div>
+        <div class="app-by">by Frank Gallagher</div>
+      </div>
+    </div>
+    
+    <!-- 主卡片 -->
+    <div class="main-card">
+      <!-- Frank 头部 -->
+      <div class="frank-header">
+        <div class="frank-avatar" id="frankAvatar">F</div>
+        <div class="frank-info">
+          <h2>FRANK GALLAGHER</h2>
+          <p>"Philosopher. Survivor. Professional piece of shit."</p>
+        </div>
+      </div>
+      
+      <!-- 语录卡片 -->
+      <div class="quote-card empty" id="quoteCard">
+        <p style="font-size: 15px; color: var(--text-3);">
+          Click the button below to receive Frank's wisdom.<br>
+          Warning: May contain truth, profanity, and illegal advice.
+        </p>
+      </div>
+      
+      <!-- 操作按钮 -->
+      <div class="actions">
+        <button class="btn btn-primary" id="generateBtn" onclick="generateQuote()">
+          <span id="btnText">POUR ME A DRINK 🍺</span>
+        </button>
+        <button class="btn btn-secondary" id="saveBtn" onclick="toggleSave()" disabled>
+          <span>🍺 Save to The Alibi</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- 统计卡片 -->
+    <div class="stats-card">
+      <div class="stats-info">
+        <h3>🍺 QUOTES SAVED TO THE ALIBI</h3>
+        <div class="number" id="savedCount">0</div>
+      </div>
+      <button class="view-saved-btn" onclick="showSaved()">View All</button>
+    </div>
+  </div>
+  
+  <!-- 收藏弹窗 -->
+  <div class="modal-overlay" id="modalOverlay" onclick="hideModal(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">🍺 THE ALIBI ARCHIVE</span>
+        <button class="modal-close" onclick="hideSaved()">&times;</button>
+      </div>
+      <div class="modal-body" id="savedList">
+        <p style="text-align: center; color: var(--text-3); padding: 40px;">
+          No quotes saved yet.<br>
+          Go ask Frank for some wisdom, then bring it back to the bar.
+        </p>
+      </div>
+    </div>
+  </div>
+
+<script>
+// Frank 语录库
+const quotes = [
+  {
+    en: "If laughing at me makes you feel better about your pathetic life, then laugh. Consider it my gift to you.",
+    cn: "如果嘲笑我能让你对自己可悲的人生感觉好点，那就笑吧。就当我送你的礼物。",
+    tag: "Self-Worth"
+  },
+  {
+    en: "The only thing middle class about me is my ass. I shit like a king.",
+    cn: "我身上唯一中产阶级的地方就是我的屁股。我拉屎都像个国王。",
+    tag: "Middle Class"
+  },
+  {
+    en: "I'm not a bad father. I'm just not a traditional one. I teach my kids street smarts.",
+    cn: "我不是个坏父亲。我只是不走寻常路。我教我的孩子街头智慧。",
+    tag: "Parenting"
+  },
+  {
+    en: "Religion is just a way for poor people to feel better about being poor. I'm already comfortable with it.",
+    cn: "宗教只是让穷人对自己贫穷感觉好点的工具。而我，早就习惯了贫穷。",
+    tag: "Religion"
+  },
+  {
+    en: "The American Dream is dead. Long live the Frank Dream.",
+    cn: "美国梦已死。Frank 梦万岁。",
+    tag: "Politics"
+  },
+  {
+    en: "You think I don't know I'm a disappointment? I'm the most self-aware disappointment you'll ever meet.",
+    cn: "你以为我不知道自己是个废物？我是你这辈子见过最有自知之明的废物。",
+    tag: "Self-Awareness"
+  },
+  {
+    en: "Rich people think they're happy because they have money. Poor people know we're happy because we have nothing to lose.",
+    cn: "富人觉得自己快乐是因为有钱。穷人知道自己快乐是因为没什么可失去的。",
+    tag: "Class Warfare"
+  },
+  {
+    en: "I don't need your pity. I need your beer. And maybe your sandwich.",
+    cn: "我不需要你的同情。我需要你的啤酒。还有你的三明治。",
+    tag: "Survival"
+  },
+  {
+    en: "Depression is just your brain telling you that you're too good for this world. Listen to it. Then tell it to shut the fuck up.",
+    cn: "抑郁只是你的大脑告诉你，你对这个世界来说太好了。听着，然后让它他妈闭嘴。",
+    tag: "Mental Health"
+  },
+  {
+    en: "Capitalism is just organized crime with better marketing.",
+    cn: "资本主义就是营销做得更好的有组织犯罪。",
+    tag: "Economics"
+  },
+  {
+    en: "Your anxiety is just your soul saying 'this isn't it.' Trust that feeling. Then find the cheapest beer.",
+    cn: "你的焦虑只是你的灵魂在说'不是这个'。相信那个感觉。然后找最便宜的啤酒。",
+    tag: "Philosophy"
+  },
+  {
+    en: "I'm not homeless. I'm just between houses. Permanently.",
+    cn: "我不是无家可归。我只是在房子之间。永远地。",
+    tag: "Housing Crisis"
+  },
+  {
+    en: "The system isn't broken. It's working exactly as designed—to keep people like me down.",
+    cn: "系统没坏。它正在按设计运行——就是为了打压像我这样的人。",
+    tag: "System"
+  },
+  {
+    en: "Love is a chemical reaction. So is alcohol. I choose the one that doesn't disappoint me.",
+    cn: "爱是化学反应。酒精也是。我选那个不会让我失望的。",
+    tag: "Love"
+  },
+  {
+    en: "Gay, straight, bi, trans—we're all equally fucked by the economy.",
+    cn: "同性恋、异性恋、双性恋、跨性别——我们都被经济操得一样惨。",
+    tag: "LGBTQ+"
+  },
+  {
+    en: "Success is a scam invented by people who got lucky early.",
+    cn: "成功是那些早期走狗屎运的人发明的骗局。",
+    tag: "Success"
+  },
+  {
+    en: "You want life advice? Here's one: Never pay for anything you can steal. And never steal from people poorer than you.",
+    cn: "想要人生建议？给你一条：永远别为能偷的东西付钱。永远别偷比你更穷的人。",
+    tag: "Street Wisdom"
+  },
+  {
+    en: "Therapy is expensive. Beer is cheap. Do the math.",
+    cn: "心理治疗很贵。啤酒很便宜。自己算吧。",
+    tag: "Mental Health"
+  },
+  {
+    en: "I'm not lazy. I'm energy efficient.",
+    cn: "我不是懒。我是节能环保。",
+    tag: "Work Ethic"
+  },
+  {
+    en: "Your job doesn't define you. Your ability to scam free meals does.",
+    cn: "你的工作不能定义你。你蹭免费饭的能力才能。",
+    tag: "Identity"
+  }
+];
+
+// 数据
+let savedQuotes = JSON.parse(localStorage.getItem('frankQuotes') || '[]');
+let currentQuote = null;
+let usedQuotes = [];
+let clickCount = 0;
+let isResting = false;
+
+// 深夜醉鬼语录（更疯版本）
+const drunkQuotes = [
+  {
+    en: "You think YOU have problems? I forgot where I live three times this week.",
+    cn: "你以为你有问题？我这周忘了自己住哪三次。",
+    tag: "Lost & Confused"
+  },
+  {
+    en: "It's 3am and I'm still prettier than your career.",
+    cn: "凌晨三点了，我还比你的事业体面。",
+    tag: "Late Night Truth"
+  },
+  {
+    en: "The only thing I'm committed to is not committing to anything.",
+    cn: "我唯一承诺的就是不承诺任何事。",
+    tag: "Commitment Issues"
+  },
+  {
+    en: "Your ex blocked you? I've been blocked by life itself.",
+    cn: "你前任拉黑你？我被生活本身拉黑了。",
+    tag: "Blocked"
+  },
+  {
+    en: "I'm not drunk, I'm just horizontally challenged when standing.",
+    cn: "我没醉，我只是站着的时候水平有点挑战。",
+    tag: "Gravity Check"
+  }
+];
+
+// 初始化
+updateSavedCount();
+
+// 深夜模式检测
+if (isLateNight()) {
+  document.body.classList.add('late-night');
+}
+
+function generateQuote() {
+  if (isResting) return;
+  
+  clickCount++;
+  
+  // Frank 需要休息（连续5次后）
+  if (clickCount >= 5) {
+    isResting = true;
+    const btn = document.getElementById('generateBtn');
+    const btnText = document.getElementById('btnText');
+    btn.disabled = true;
+    btnText.textContent = "GIMME A BREAK... (10s)";
+    btn.style.opacity = "0.6";
+    
+    showRestingQuote();
+    
+    setTimeout(() => {
+      isResting = false;
+      clickCount = 0;
+      btn.disabled = false;
+      btn.style.opacity = "1";
+      btnText.textContent = isLateNight() ? "POUR ME A DRINK 🍺🍺" : "POUR ME A DRINK 🍺";
+    }, 10000);
+    return;
+  }
+  
+  const avatar = document.getElementById('frankAvatar');
+  avatar.classList.add('talking');
+  setTimeout(() => avatar.classList.remove('talking'), 300);
+  
+  // 深夜模式：混入醉鬼语录
+  let pool = quotes;
+  if (isLateNight() && Math.random() > 0.5) {
+    pool = drunkQuotes;
+  }
+  
+  // 随机选择（避免重复）
+  const available = pool.filter(q => !usedQuotes.includes(q.en));
+  if (available.length === 0) {
+    usedQuotes = [];
+  }
+  const finalPool = available.length > 0 ? available : pool;
+  currentQuote = finalPool[Math.floor(Math.random() * finalPool.length)];
+  usedQuotes.push(currentQuote.en);
+  
+  // 更新卡片
+  const card = document.getElementById('quoteCard');
+  card.classList.remove('empty');
+  card.innerHTML = `
+    <div class="quote-en">"${currentQuote.en}"</div>
+    <div class="quote-cn">${currentQuote.cn}</div>
+    <div class="quote-meta">
+      <span class="quote-tag">${currentQuote.tag}</span>
+      <button onclick="speakQuote('${currentQuote.en.replace(/'/g, "\\'")}')" style="background: none; border: none; cursor: pointer; color: var(--accent); font-size: 13px; display: flex; align-items: center; gap: 4px;">
+        🔊 Hear Frank Say It
+      </button>
+    </div>
+  `;
+  
+  // 启用保存按钮
+  const saveBtn = document.getElementById('saveBtn');
+  saveBtn.disabled = false;
+  saveBtn.classList.remove('collected');
+  saveBtn.querySelector('span').textContent = '🍺 Save to The Alibi';
+}
+
+function toggleSave() {
+  if (!currentQuote) return;
+  
+  const btn = document.getElementById('saveBtn');
+  const existing = savedQuotes.find(q => q.en === currentQuote.en);
+  
+  if (existing) {
+    savedQuotes = savedQuotes.filter(q => q.en !== currentQuote.en);
+    btn.classList.remove('collected');
+    btn.querySelector('span').textContent = '🍺 Save to The Alibi';
+  } else {
+    savedQuotes.push({...currentQuote, savedAt: new Date().toISOString()});
+    btn.classList.add('collected');
+    btn.querySelector('span').textContent = '🍺 Saved to The Alibi';
+  }
+  
+  localStorage.setItem('frankQuotes', JSON.stringify(savedQuotes));
+  updateSavedCount();
+}
+
+function updateSavedCount() {
+  document.getElementById('savedCount').textContent = savedQuotes.length;
+}
+
+function showSaved() {
+  const list = document.getElementById('savedList');
+  
+  if (savedQuotes.length === 0) {
+    list.innerHTML = `
+      <div class="alibi-wall">
+        <div class="alibi-sign">
+          <h4>THE ALIBI ROOM</h4>
+          <p>SOUTH SIDE, CHICAGO</p>
+        </div>
+        <div class="alibi-empty">
+          <div class="beer-icon">🍺</div>
+          <p>The bar is empty tonight.</p>
+          <p style="font-size: 13px; margin-top: 8px;">Go ask Frank for some wisdom, then bring it back.</p>
+        </div>
+      </div>
+    `;
+  } else {
+    list.innerHTML = `
+      <div class="alibi-wall">
+        <div class="alibi-sign">
+          <h4>THE ALIBI ROOM</h4>
+          <p>SOUTH SIDE, CHICAGO · ${savedQuotes.length} DRINKS ON THE WALL</p>
+        </div>
+        <div class="drink-menu">
+          ${savedQuotes.slice().reverse().map((q, i) => `
+            <div class="drink-item">
+              <div class="drink-quote">"${q.en}"</div>
+              <div class="drink-translation">${q.cn}</div>
+              <div class="drink-footer">
+                <span class="drink-type">${q.tag}</span>
+                <button class="drink-play" onclick="speakQuote('${q.en.replace(/'/g, "\\'")}')">
+                  🔊 Order Again
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+  
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function hideSaved() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
+function hideModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) {
+    hideSaved();
+  }
+}
+
+// 检查是否深夜（22:00-6:00）
+function isLateNight() {
+  const hour = new Date().getHours();
+  return hour >= 22 || hour < 6;
+}
+
+// Frank 休息时显示的语录
+function showRestingQuote() {
+  const card = document.getElementById('quoteCard');
+  card.classList.remove('empty');
+  card.innerHTML = `
+    <div class="quote-en" style="color: var(--text-3); font-style: italic;">
+      "Jesus Christ, give me a fucking minute. Even philosophers need to piss."
+    </div>
+    <div class="quote-cn" style="color: var(--text-3);">
+      基督啊，让我喘口气。就算是哲学家也要撒尿的。
+    </div>
+    <div class="quote-meta">
+      <span class="quote-tag">Frank Needs a Break</span>
+    </div>
+  `;
+}
+
+// 深夜模式提示
+if (isLateNight()) {
+  document.getElementById('btnText').textContent = "POUR ME A DRINK 🍺🍺";
+}
+
+// 每日金句（基于日期）
+function getDailyQuote() {
+  const today = new Date().toDateString();
+  const savedDate = localStorage.getItem('frankDailyDate');
+  const savedQuote = localStorage.getItem('frankDailyQuote');
+  
+  if (savedDate === today && savedQuote) {
+    return JSON.parse(savedQuote);
+  }
+  
+  // 生成新的每日金句
+  const daily = quotes[Math.floor(Math.random() * quotes.length)];
+  localStorage.setItem('frankDailyDate', today);
+  localStorage.setItem('frankDailyQuote', JSON.stringify(daily));
+  return daily;
+}
+
+// 语音朗读
+function speakQuote(text) {
+  if ('speechSynthesis' in window) {
+    // 取消之前的朗读
+    window.speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9;
+    utterance.pitch = 0.8; // 低沉的声音
+    
+    // 尝试找一个低沉的男声
+    const voices = window.speechSynthesis.getVoices();
+    const maleVoice = voices.find(v => v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google US English'));
+    if (maleVoice) {
+      utterance.voice = maleVoice;
+    }
+    
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+// 显示每日金句
+function showDailyQuote() {
+  const daily = getDailyQuote();
+  currentQuote = daily;
+  
+  const card = document.getElementById('quoteCard');
+  card.classList.remove('empty');
+  card.innerHTML = `
+    <div style="font-size: 11px; color: var(--accent); letter-spacing: 2px; margin-bottom: 16px; text-transform: uppercase;">🍺 Today's Special at The Alibi</div>
+    <div class="quote-en">"${daily.en}"</div>
+    <div class="quote-cn">${daily.cn}</div>
+    <div class="quote-meta">
+      <span class="quote-tag">${daily.tag}</span>
+      <button onclick="speakQuote('${daily.en.replace(/'/g, "\\'")}')" style="background: none; border: none; cursor: pointer; color: var(--accent); font-size: 13px; display: flex; align-items: center; gap: 4px;">
+        🔊 Hear Frank Say It
+      </button>
+    </div>
+  `;
+  
+  // 启用保存按钮
+  const saveBtn = document.getElementById('saveBtn');
+  saveBtn.disabled = false;
+  saveBtn.classList.remove('collected');
+  const isSaved = savedQuotes.find(q => q.en === daily.en);
+  if (isSaved) {
+    saveBtn.classList.add('collected');
+    saveBtn.querySelector('span').textContent = '🍺 Saved to The Alibi';
+  } else {
+    saveBtn.querySelector('span').textContent = '🍺 Save to The Alibi';
+  }
+}
+
+// 页面加载时显示每日金句
+showDailyQuote();
+</script>
+</body>
+</html>
