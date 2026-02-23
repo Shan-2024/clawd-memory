@@ -2,17 +2,22 @@
 
 ## 自动同步任务
 
-每 10 分钟自动从 GitHub 拉取最新记忆：
+每次有新内容时同步到 GitHub：
 
 ```bash
-cd /home/admin/clawd && git pull origin main
+cd /home/admin/.openclaw/workspace && git add -A && git commit -m "sync" && git push origin main
 ```
 
-## 检查频率
+从 GitHub 拉取：
 
-- 云端服务器：每 10 分钟检查一次
-- Mac 端：需要手动 push（或用 crontab 自动）
+```bash
+cd /home/admin/.openclaw/workspace && git pull origin main
+```
 
----
+## 说明
 
-*配置时间: 2026-02-21*
+- 工作目录：`/home/admin/.openclaw/workspace`
+- 仓库：https://github.com/Shan-2024/clawd-memory
+- 服务器：新加坡（43.98.247.48）
+
+*迁移时间: 2026-02-23*
