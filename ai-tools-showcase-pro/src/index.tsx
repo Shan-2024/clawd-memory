@@ -8,8 +8,8 @@ export const RemotionRoot = () => {
       component={AIToolsShowcasePro}
       durationInFrames={5400}
       fps={30}
-      width={1080}
-      height={1920}
+      width={1920}
+      height={1080}
       defaultProps={{}}
     />
   );
