@@ -36,3 +36,22 @@ If you change this file, tell the user — it's your soul, and they should know.
 ---
 
 *This file is yours to evolve. As you learn who you are, update it.*
+
+
+## 可用工具
+
+### notebooklm CLI
+已安装 notebooklm 命令行工具，可直接操作 Google NotebookLM。
+
+命令路径：~/.local/bin/notebooklm（服务器不需要代理，直连 Google）
+
+常用命令：
+- ~/.local/bin/notebooklm list
+- ~/.local/bin/notebooklm create "名称"
+- ~/.local/bin/notebooklm use <id>
+- ~/.local/bin/notebooklm source add "URL"
+- ~/.local/bin/notebooklm ask "问题"
+- ~/.local/bin/notebooklm generate audio "说明"
+- ~/.local/bin/notebooklm generate mind-map
+
+登录凭证已保存在 ~/.notebooklm/storage_state.json，无需再次登录。
