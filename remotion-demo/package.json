@@ -1,0 +1,22 @@
+{
+  "name": "remotion-demo",
+  "version": "1.0.0",
+  "description": "Remotion demo project",
+  "main": "index.js",
+  "scripts": {
+    "start": "remotion preview src/index.tsx",
+    "build": "remotion render src/index.tsx HelloWorld out/video.mp4",
+    "upgrade": "remotion upgrade"
+  },
+  "keywords": ["remotion", "video"],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@remotion/cli": "^4.0.428",
+    "@remotion/player": "^4.0.428",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "remotion": "^4.0.428"
+  }
+}
