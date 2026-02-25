@@ -17,9 +17,16 @@ class YouTubeExtractor:
     
     def _run_ytdlp(self, args: List[str]) -> subprocess.CompletedProcess:
         """运行 yt-dlp 命令"""
+        import os
+        
         cmd = ['yt-dlp'] + args
         if self.proxy:
             cmd.extend(['--proxy', self.proxy])
+        
+        # 添加cookies支持
+        cookies_file = os.path.expanduser('~/.openclaw/workspace/the-gallaghers/lip/cookies/youtube_cookies.txt')
+        if os.path.exists(cookies_file):
+            cmd.extend(['--cookies', cookies_file])
         
         # Python 3.6兼容性：使用stdout和stderr参数
         result = subprocess.run(
