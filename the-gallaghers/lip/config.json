@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "max_channels": 10,
+  "version": "1.2",
+  "max_channels": 20,
   "daily_limit_per_channel": 5,
   "channels": [
     {
@@ -9,7 +9,7 @@
       "name": "@testchannel",
       "display_name": "测试频道",
       "added_at": "2026-02-25T10:10:51.549575",
-      "status": "active",
+      "status": "inactive",
       "stats": {
         "total_videos": 100,
         "analyzed_count": 1,
@@ -27,7 +27,7 @@
       "name": "@testchannel",
       "display_name": "测试频道",
       "added_at": "2026-02-25T10:11:58.696241",
-      "status": "active",
+      "status": "inactive",
       "stats": {
         "total_videos": 0,
         "analyzed_count": 0,
@@ -43,7 +43,7 @@
       "name": "test",
       "display_name": "test",
       "added_at": "2026-02-25T10:12:34.525698",
-      "status": "active",
+      "status": "inactive",
       "stats": {
         "total_videos": 2,
         "analyzed_count": 6,
@@ -64,15 +64,17 @@
       "id": "ch_20260225101614",
       "url": "https://www.youtube.com/@lexfridman",
       "name": "lexfridman",
-      "display_name": "lexfridman",
+      "display_name": "Lex Fridman",
       "added_at": "2026-02-25T10:16:14.940719",
       "status": "active",
+      "category": "深度访谈",
+      "priority": "high",
       "stats": {
         "total_videos": 2,
         "analyzed_count": 0,
         "last_analyzed_at": null
       },
-      "sync_to_feishu": false,
+      "sync_to_feishu": true,
       "feishu_doc_token": null,
       "analyzed_video_ids": []
     },
@@ -80,16 +82,18 @@
       "id": "ch_20260225103828",
       "url": "https://www.youtube.com/@JordanBPeterson/videos",
       "name": "JordanBPeterson",
-      "display_name": "JordanBPeterson",
+      "display_name": "Jordan B Peterson",
       "added_at": "2026-02-25T10:38:28.277774",
       "status": "active",
+      "category": "心理学/哲学",
+      "priority": "high",
       "stats": {
         "total_videos": 5,
         "analyzed_count": 6,
         "last_analyzed_at": "2026-02-25T10:44:51.409899"
       },
-      "sync_to_feishu": false,
-      "feishu_doc_token": null,
+      "sync_to_feishu": true,
+      "feishu_doc_token": "KSbQdEtUyocf0JxVBaWceI8wnqh",
       "analyzed_video_ids": [
         "UCL_f53ZEJxp8TtlOkHwMV9Q",
         "Wv7lEyck2mg",
@@ -98,12 +102,179 @@
         "h69SwIn-bA4",
         "Nn1Np7mrFck"
       ]
+    },
+    {
+      "id": "ch_20260225211500",
+      "url": "https://www.youtube.com/@joerogan",
+      "name": "joerogan",
+      "display_name": "Joe Rogan Experience",
+      "added_at": "2026-02-25T21:15:00.000000",
+      "status": "active",
+      "category": "深度访谈",
+      "priority": "high",
+      "stats": {
+        "total_videos": 0,
+        "analyzed_count": 0,
+        "last_analyzed_at": null
+      },
+      "sync_to_feishu": true,
+      "feishu_doc_token": null,
+      "analyzed_video_ids": []
+    },
+    {
+      "id": "ch_20260225211501",
+      "url": "https://www.youtube.com/@TheDiaryOfACEO",
+      "name": "TheDiaryOfACEO",
+      "display_name": "The Diary Of A CEO",
+      "added_at": "2026-02-25T21:15:01.000000",
+      "status": "active",
+      "category": "商业/领导力",
+      "priority": "high",
+      "stats": {
+        "total_videos": 0,
+        "analyzed_count": 0,
+        "last_analyzed_at": null
+      },
+      "sync_to_feishu": true,
+      "feishu_doc_token": null,
+      "analyzed_video_ids": []
+    },
+    {
+      "id": "ch_20260225211502",
+      "url": "https://www.youtube.com/@wearenocode/videos",
+      "name": "wearenocode",
+      "display_name": "No Code",
+      "added_at": "2026-02-25T21:15:02.000000",
+      "status": "active",
+      "category": "AI/技术",
+      "priority": "medium",
+      "stats": {
+        "total_videos": 0,
+        "analyzed_count": 0,
+        "last_analyzed_at": null
+      },
+      "sync_to_feishu": true,
+      "feishu_doc_token": null,
+      "analyzed_video_ids": []
+    },
+    {
+      "id": "ch_20260225211503",
+      "url": "https://www.youtube.com/@DwarkeshPatel",
+      "name": "DwarkeshPatel",
+      "display_name": "Dwarkesh Patel",
+      "added_at": "2026-02-25T21:15:03.000000",
+      "status": "active",
+      "category": "AI研究",
+      "priority": "high",
+      "stats": {
+        "total_videos": 0,
+        "analyzed_count": 0,
+        "last_analyzed_at": null
+      },
+      "sync_to_feishu": true,
+      "feishu_doc_token": null,
+      "analyzed_video_ids": []
+    },
+    {
+      "id": "ch_20260225211504",
+      "url": "https://www.youtube.com/@matthew_berman",
+      "name": "matthew_berman",
+      "display_name": "Matthew Berman",
+      "added_at": "2026-02-25T21:15:04.000000",
+      "status": "active",
+      "category": "AI新闻",
+      "priority": "medium",
+      "stats": {
+        "total_videos": 0,
+        "analyzed_count": 0,
+        "last_analyzed_at": null
+      },
+      "sync_to_feishu": true,
+      "feishu_doc_token": null,
+      "analyzed_video_ids": []
+    },
+    {
+      "id": "ch_20260225211505",
+      "url": "https://www.youtube.com/@futurepedia_io/videos",
+      "name": "futurepedia_io",
+      "display_name": "Futurepedia",
+      "added_at": "2026-02-25T21:15:05.000000",
+      "status": "active",
+      "category": "AI工具",
+      "priority": "medium",
+      "stats": {
+        "total_videos": 0,
+        "analyzed_count": 0,
+        "last_analyzed_at": null
+      },
+      "sync_to_feishu": true,
+      "feishu_doc_token": null,
+      "analyzed_video_ids": []
+    },
+    {
+      "id": "ch_20260225211506",
+      "url": "https://www.youtube.com/@ai-foundations/videos",
+      "name": "ai-foundations",
+      "display_name": "AI Foundations",
+      "added_at": "2026-02-25T21:15:06.000000",
+      "status": "active",
+      "category": "AI教育",
+      "priority": "medium",
+      "stats": {
+        "total_videos": 0,
+        "analyzed_count": 0,
+        "last_analyzed_at": null
+      },
+      "sync_to_feishu": true,
+      "feishu_doc_token": null,
+      "analyzed_video_ids": []
+    },
+    {
+      "id": "ch_20260225211507",
+      "url": "https://www.youtube.com/@Itssssss_Jack",
+      "name": "Itssssss_Jack",
+      "display_name": "Jack",
+      "added_at": "2026-02-25T21:15:07.000000",
+      "status": "active",
+      "category": "开发者",
+      "priority": "low",
+      "stats": {
+        "total_videos": 0,
+        "analyzed_count": 0,
+        "last_analyzed_at": null
+      },
+      "sync_to_feishu": true,
+      "feishu_doc_token": null,
+      "analyzed_video_ids": []
+    },
+    {
+      "id": "ch_20260225211508",
+      "url": "https://www.youtube.com/channel/UCjc1vfduI7BhVMXBLJLDjmA",
+      "name": "unknown_channel",
+      "display_name": "未知频道",
+      "added_at": "2026-02-25T21:15:08.000000",
+      "status": "active",
+      "category": "待识别",
+      "priority": "low",
+      "stats": {
+        "total_videos": 0,
+        "analyzed_count": 0,
+        "last_analyzed_at": null
+      },
+      "sync_to_feishu": false,
+      "feishu_doc_token": null,
+      "analyzed_video_ids": []
     }
   ],
   "settings": {
-    "auto_sync_feishu": false,
-    "auto_sync_notebooklm": false,
+    "auto_sync_feishu": true,
+    "auto_sync_notebooklm": true,
     "analysis_model": "kimi-k2.5",
-    "proxy": null
+    "proxy": null,
+    "cron_schedule": "0 2 * * *",
+    "max_videos_per_run": 55,
+    "enable_priority_filtering": true,
+    "avoid_duplicates": true,
+    "processing_strategy": "sequential_oldest_first"
   }
 }

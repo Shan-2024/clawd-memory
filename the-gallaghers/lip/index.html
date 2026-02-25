@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lip 智能学习助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+        
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .channels {
+            padding: 40px;
+        }
+        
+        .channels h2 {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .channel-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .channel-card:hover {
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            transform: translateY(-3px);
+        }
+        
+        .channel-card.priority-high {
+            border-left-color: #ff6b6b;
+        }
+        
+        .channel-card.priority-medium {
+            border-left-color: #ffd93d;
+        }
+        
+        .channel-card.priority-low {
+            border-left-color: #6bcf7f;
+        }
+        
+        .channel-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .channel-category {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .channel-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .channel-stats span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .feishu-link {
+            display: inline-block;
+            background: #06c;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            margin-top: 15px;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+        
+        .feishu-link:hover {
+            background: #0052cc;
+        }
+        
+        .schedule {
+            padding: 40px;
+            background: #f8f9fa;
+        }
+        
+        .schedule h2 {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .schedule-info {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .schedule-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .schedule-icon {
+            width: 50px;
+            height: 50px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            color: white;
+            font-size: 1.5em;
+        }
+        
+        .schedule-details {
+            flex: 1;
+        }
+        
+        .schedule-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .schedule-desc {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .footer {
+            background: #333;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .footer-link {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-link:hover {
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .channel-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Lip 智能学习助手</h1>
+            <div class="subtitle">自动分析YouTube视频，生成NotebookLM级别学习笔记</div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="number">11</div>
+                <div class="label">活跃频道</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">5</div>
+                <div class="label">每日视频/频道</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">55</div>
+                <div class="label">每日最大处理量</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">02:00</div>
+                <div class="label">每日执行时间</div>
+            </div>
+        </div>
+        
+        <div class="channels">
+            <h2>📺 监控的YouTube频道</h2>
+            <div class="channel-grid">
+                <!-- 频道卡片将通过JavaScript动态生成 -->
+            </div>
+        </div>
+        
+        <div class="schedule">
+            <h2>⏰ 定时任务详情</h2>
+            <div class="schedule-info">
+                <div class="schedule-item">
+                    <div class="schedule-icon">⏰</div>
+                    <div class="schedule-details">
+                        <div class="schedule-title">执行时间</div>
+                        <div class="schedule-desc">每天凌晨2:00（北京时间）自动执行</div>
+                    </div>
+                </div>
+                
+                <div class="schedule-item">
+                    <div class="schedule-icon">📊</div>
+                    <div class="schedule-details">
+                        <div class="schedule-title">处理策略</div>
+                        <div class="schedule-desc">每个频道每天处理5个视频，从旧到新顺序处理，避免重复</div>
+                    </div>
+                </div>
+                
+                <div class="schedule-item">
+                    <div class="schedule-icon">📝</div>
+                    <div class="schedule-details">
+                        <div class="schedule-title">飞书同步</div>
+                        <div class="schedule-desc">自动为每个频道创建飞书文档，每天更新学习笔记</div>
+                    </div>
+                </div>
+                
+                <div class="schedule-item">
+                    <div class="schedule-icon">🧠</div>
+                    <div class="schedule-details">
+                        <div class="schedule-title">AI分析</div>
+                        <div class="schedule-desc">使用NotebookLM进行深度分析，生成专业学习笔记</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Lip 智能学习助手 v1.2</p>
+            <div class="footer-links">
+                <a href="https://feishu.cn/docx/KSbQdEtUyocf0JxVBaWceI8wnqh" class="footer-link" target="_blank">📝 示例文档</a>
+                <a href="https://github.com/Shan-2024/clawd-memory/tree/main/the-gallaghers/lip" class="footer-link" target="_blank">🔧 项目源码</a>
+                <a href="mailto:admin@example.com" class="footer-link">📧 联系支持</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 频道数据
+        const channels = [
+            {
+                name: "Lex Fridman",
+                category: "深度访谈",
+                priority: "high",
+                url: "https://www.youtube.com/@lexfridman",
+                analyzed: 0,
+                feishu: null
+            },
+            {
+                name: "Joe Rogan Experience",
+                category: "深度访谈",
+                priority: "high",
+                url: "https://www.youtube.com/@joerogan",
+                analyzed: 0,
+                feishu: null
+            },
+            {
+                name: "The Diary Of A CEO",
+                category: "商业/领导力",
+                priority: "high",
+                url: "https://www.youtube.com/@TheDiaryOfACEO",
+                analyzed: 0,
+                feishu: null
+            },
+            {
+                name: "Dwarkesh Patel",
+                category: "AI研究",
+                priority: "high",
+                url: "https://www.youtube.com/@DwarkeshPatel",
+                analyzed: 0,
+                feishu: null
+            },
+            {
+                name: "Jordan B Peterson",
+                category: "心理学/哲学",
+                priority: "high",
+                url: "https://www.youtube.com/@JordanBPeterson/videos",
+                analyzed: 6,
+                feishu: "https://feishu.cn/docx/KSbQdEtUyocf0JxVBaWceI8wnqh"
+            },
+            {
+                name: "No Code",
+                category: "AI/技术",
+                priority: "medium",
+                url: "https://www.youtube.com/@wearenocode/videos",
+                analyzed: 0,
+                feishu: null
+            },
+            {
+                name: "Matthew Berman",
+                category: "AI新闻",
+                priority: "medium",
+                url: "https://www.youtube.com/@matthew_berman",
+                analyzed: 0,
+                feishu: null
+            },
+            {
+                name: "Futurepedia",
+                category: "AI工具",
+                priority: "medium",
+                url: "https://www.youtube.com/@futurepedia_io/videos",
+                analyzed: 0,
+                feishu: null
+            },
+            {
+                name: "AI Foundations",
+                category: "AI教育",
+                priority: "medium",
+                url: "https://www.youtube.com/@ai-foundations/videos",
+                analyzed: 0,
+                feishu: null
+            },
+            {
+                name: "Jack",
+                category: "开发者",
+                priority: "low",
+                url: "https://www.youtube.com/@Itssssss_Jack",
+                analyzed: 0,
+                feishu: null
+            },
+            {
+                name: "未知频道",
+                category: "待识别",
+                priority: "low",
+                url: "https://www.youtube.com/channel/UCjc1vfduI7BhVMXBLJLDjmA",
+                analyzed: 0,
+                feishu: null
+            }
+        ];
+
+        // 渲染频道卡片
+        function renderChannels() {
+            const container = document.querySelector('.channel-grid');
+            container.innerHTML = '';
+            
+            channels.forEach(channel => {
+                const card = document.createElement('div');
+                card.className = `channel-card priority-${channel.priority}`;
+                
+                const priorityEmoji = {
+                    high: '🔥',
+                    medium: '⭐',
+                    low: '📌'
+                }[channel.priority];
+                
+                card.innerHTML = `
+                    <div class="channel-name">${priorityEmoji} ${channel.name}</div>
+                    <div class="channel-category">${channel.category}</div>
+                    <div class="channel-stats">
+                        <span>📊 已分析: ${channel.analyzed}</span>
+                        <span>🎯 优先级: ${channel.priority}</span>
+                    </div>
+                    ${channel.feishu ? `<a href="${channel.feishu}" class="feishu-link" target="_blank">📝 查看飞书文档</a>` : ''}
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // 页面加载完成后渲染
+        document.addEventListener('DOMContentLoaded', renderChannels);
+    </script>
+</body>
+</html>
