@@ -31,8 +31,8 @@ class FeishuDocSync:
             # 调用openclaw命令行工具
             result = subprocess.run(
                 ['openclaw', 'feishu', 'doc', 'create', title],
-                capture_output=True,
-                text=True,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                universal_newlines=True,
                 timeout=30
             )
             
@@ -95,8 +95,8 @@ class FeishuDocSync:
                 # 使用openclaw命令
                 result = subprocess.run(
                     ['openclaw', 'feishu', 'doc', 'write', doc_token, temp_path],
-                    capture_output=True,
-                    text=True,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                    universal_newlines=True,
                     timeout=30
                 )
                 
@@ -143,8 +143,8 @@ class FeishuDocSync:
             try:
                 result = subprocess.run(
                     ['openclaw', 'feishu', 'doc', 'append', doc_token, temp_path],
-                    capture_output=True,
-                    text=True,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                    universal_newlines=True,
                     timeout=30
                 )
                 
