@@ -107,6 +107,8 @@ class LipAPIHandler(BaseHTTPRequestHandler):
             self._handle_analyze_pass_through(data)
         elif path == '/api/sync/notebooklm':
             self._handle_sync_notebooklm(data)
+        elif path == '/api/sync/feishu':
+            self._handle_sync_feishu(data)
         else:
             self._set_headers(404)
             self.wfile.write(json.dumps({'error': 'Not found'}).encode())
@@ -408,6 +410,22 @@ class LipAPIHandler(BaseHTTPRequestHandler):
             self._set_headers(500)
             self.wfile.write(json.dumps({'error': str(e)}).encode())
     
+    def _handle_sync_feishu(self, data):
+        """同步到飞书文档"""
+        try:
+            from storage.feishu_sync import sync_to_feishu
+            
+            channel_name = data.get('channel', '').strip()
+            
+            result = sync_to_feishu(channel_name)
+            
+            self._set_headers(200)
+            self.wfile.write(json.dumps(result, ensure_ascii=False).encode())
+            
+        except Exception as e:
+            self._set_headers(500)
+            self.wfile.write(json.dumps({'error': str(e)}).encode())
+    
     def _handle_get_notebooklm_list(self):
         """获取NotebookLM笔记本列表"""
         try:
@@ -446,6 +464,7 @@ def run_server(port=8888):
     print(f"     POST /api/analyze/pass-through    - 直通模式（YouTube→NotebookLM）")
     print(f"     GET  /api/notebooklm/notebooks    - NotebookLM笔记本列表")
     print(f"     POST /api/sync/notebooklm         - 同步本地笔记到NotebookLM")
+    print(f"     POST /api/sync/feishu             - 同步本地笔记到飞书文档")
     print(f"\n按 Ctrl+C 停止服务器")
     print("-" * 50)
     

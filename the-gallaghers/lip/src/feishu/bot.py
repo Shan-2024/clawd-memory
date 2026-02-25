@@ -46,6 +46,9 @@ class LipFeishuBot:
         elif '同步' in message and 'NotebookLM' in message:
             return self._handle_sync_notebooklm(message)
         
+        elif '同步飞书' in message or '飞书同步' in message:
+            return self._handle_sync_feishu(message)
+        
         elif '科普词典' in message or '知识库' in message:
             return self._handle_knowledge_dict()
         
@@ -192,6 +195,55 @@ class LipFeishuBot:
         
         return f"🔄 正在同步 **{channel_name}** 到 NotebookLM...\n（共 {len(notes)} 条笔记）"
     
+    def _handle_sync_feishu(self, message: str) -> str:
+        """处理飞书文档同步命令"""
+        # 提取博主名
+        parts = message.split()
+        channel_name = None
+        
+        for i, part in enumerate(parts):
+            if part in ['同步飞书', '飞书同步'] and i + 1 < len(parts):
+                channel_name = parts[i + 1]
+                break
+        
+        if not channel_name:
+            # 尝试从消息中提取
+            for part in parts:
+                if part.startswith('@') or part in ['all', '全部']:
+                    channel_name = part if part != '全部' else None
+                    break
+        
+        try:
+            from storage.feishu_sync import sync_to_feishu
+            
+            if channel_name and channel_name not in ['all', '全部']:
+                # 同步特定频道
+                result = sync_to_feishu(channel_name)
+                if result['success']:
+                    return f"""✅ 飞书文档同步完成
+
+📄 博主：**{channel_name}**
+📊 同步了 {result.get('notes_count', 0)} 条笔记
+🔗 文档链接：{result.get('doc_url', 'N/A')}
+
+点击链接查看飞书文档！"""
+                else:
+                    return f"❌ 同步失败：{result.get('error', '未知错误')}"
+            else:
+                # 同步所有频道
+                result = sync_to_feishu()
+                if result['success']:
+                    channels_synced = sum(1 for r in result.get('results', []) if r.get('success'))
+                    return f"""✅ 批量同步完成
+
+📊 同步了 {channels_synced}/{result.get('channels', 0)} 个博主
+请查看飞书文档获取详情！"""
+                else:
+                    return f"❌ 同步失败：{result.get('error', '未知错误')}"
+        
+        except Exception as e:
+            return f"❌ 同步失败：{str(e)}"
+    
     def _handle_knowledge_dict(self) -> str:
         """处理科普词典查询"""
         knowledge = self.storage.get_knowledge_dict()
@@ -227,6 +279,9 @@ class LipFeishuBot:
 
 **同步到NotebookLM**
 `同步 <博主名> 到NotebookLM`
+
+**同步到飞书文档**
+`同步飞书 <博主名>`
 
 **查看科普词典**
 `科普词典` 或 `知识库`
