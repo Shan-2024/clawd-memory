@@ -85,8 +85,9 @@ class SimpleYouTubeExtractor:
         try:
             result = subprocess.run(
                 cmd,
-                capture_output=True,
-                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                universal_newlines=True,
                 timeout=30
             )
             
@@ -139,8 +140,9 @@ class SimpleYouTubeExtractor:
         try:
             result = subprocess.run(
                 cmd,
-                capture_output=True,
-                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                universal_newlines=True,
                 timeout=60
             )
             
