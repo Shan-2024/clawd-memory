@@ -73,6 +73,8 @@ class LipAPIHandler(BaseHTTPRequestHandler):
             self._handle_get_notes(params)
         elif path == '/api/knowledge':
             self._handle_get_knowledge(params)
+        elif path == '/api/notebooklm/notebooks':
+            self._handle_get_notebooklm_list()
         elif path == '/api/test':
             self._handle_test()
         else:
@@ -103,6 +105,31 @@ class LipAPIHandler(BaseHTTPRequestHandler):
             self._handle_analyze_now(data)
         elif path == '/api/sync/notebooklm':
             self._handle_sync_notebooklm(data)
+        else:
+            self._set_headers(404)
+            self.wfile.write(json.dumps({'error': 'Not found'}).encode())
+    
+    def do_GET(self):
+        """处理GET请求"""
+        parsed = urlparse(self.path)
+        path = parsed.path
+        params = parse_qs(parsed.query)
+        
+        # 解析路径
+        parts = path.strip('/').split('/')
+        
+        if path == '/api/status':
+            self._handle_get_status()
+        elif path == '/api/channels':
+            self._handle_get_channels()
+        elif path == '/api/notes':
+            self._handle_get_notes(params)
+        elif path == '/api/knowledge':
+            self._handle_get_knowledge(params)
+        elif path == '/api/notebooklm/notebooks':
+            self._handle_get_notebooklm_list()
+        elif path == '/api/test':
+            self._handle_test()
         else:
             self._set_headers(404)
             self.wfile.write(json.dumps({'error': 'Not found'}).encode())
@@ -321,11 +348,52 @@ class LipAPIHandler(BaseHTTPRequestHandler):
     def _handle_sync_notebooklm(self, data):
         """同步到NotebookLM"""
         try:
+            from storage.notebooklm_sync import NotebookLMSync
+            
             channel_name = data.get('channel', '').strip()
             
-            # TODO: 实现NotebookLM同步
+            sync = NotebookLMSync()
+            
+            if channel_name:
+                # 同步特定频道
+                notebooks_dir = os.path.join(os.path.dirname(__file__), 'notebooks')
+                channel_dir = os.path.join(notebooks_dir, channel_name)
+                
+                if not os.path.exists(channel_dir):
+                    self._set_headers(404)
+                    self.wfile.write(json.dumps({'error': 'Channel not found'}, ensure_ascii=False).encode())
+                    return
+                
+                result = sync.sync_channel(channel_name, channel_dir)
+            else:
+                # 同步所有频道
+                notebooks_dir = os.path.join(os.path.dirname(__file__), 'notebooks')
+                results = sync.sync_all(notebooks_dir)
+                result = {
+                    'success': True,
+                    'channels': len(results),
+                    'total_added': sum(r.get('added', 0) for r in results),
+                    'total_skipped': sum(r.get('skipped', 0) for r in results),
+                    'details': results
+                }
+            
             self._set_headers(200)
-            self.wfile.write(json.dumps({'success': True, 'message': 'NotebookLM sync coming soon'}, ensure_ascii=False).encode())
+            self.wfile.write(json.dumps({'success': True, 'data': result}, ensure_ascii=False).encode())
+            
+        except Exception as e:
+            self._set_headers(500)
+            self.wfile.write(json.dumps({'error': str(e)}).encode())
+    
+    def _handle_get_notebooklm_list(self):
+        """获取NotebookLM笔记本列表"""
+        try:
+            from storage.notebooklm_sync import NotebookLMSync
+            
+            sync = NotebookLMSync()
+            notebooks = sync.list_notebooks()
+            
+            self._set_headers()
+            self.wfile.write(json.dumps({'success': True, 'data': notebooks, 'total': len(notebooks)}, ensure_ascii=False).encode())
             
         except Exception as e:
             self._set_headers(500)
@@ -344,13 +412,15 @@ def run_server(port=8888):
     print(f"🚀 Lip Web API 服务器已启动")
     print(f"   地址: http://localhost:{port}")
     print(f"   API文档:")
-    print(f"     GET  /api/status          - 系统状态")
-    print(f"     GET  /api/channels        - 频道列表")
-    print(f"     POST /api/channels        - 添加频道")
-    print(f"     POST /api/channels/delete - 删除频道")
-    print(f"     GET  /api/notes           - 笔记列表")
-    print(f"     GET  /api/knowledge       - 知识词典")
-    print(f"     POST /api/analyze         - 立即分析")
+    print(f"     GET  /api/status              - 系统状态")
+    print(f"     GET  /api/channels            - 频道列表")
+    print(f"     POST /api/channels            - 添加频道")
+    print(f"     POST /api/channels/delete     - 删除频道")
+    print(f"     GET  /api/notes               - 笔记列表")
+    print(f"     GET  /api/knowledge           - 知识词典")
+    print(f"     POST /api/analyze             - 立即分析")
+    print(f"     GET  /api/notebooklm/notebooks - NotebookLM笔记本列表")
+    print(f"     POST /api/sync/notebooklm     - 同步到NotebookLM")
     print(f"\n按 Ctrl+C 停止服务器")
     print("-" * 50)
     
