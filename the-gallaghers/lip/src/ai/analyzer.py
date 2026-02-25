@@ -57,6 +57,76 @@ class AIAnalyzer:
 - **深度学习**：机器学习的一个子领域，使用多层神经网络"""
         return "分析完成"
     
+    def generate_knowledge_from_summary(self, title: str, summary: str) -> Dict[str, str]:
+        """
+        基于摘要生成科普知识
+        
+        Args:
+            title: 视频标题
+            summary: 视频摘要
+            
+        Returns:
+            名词->解释的字典
+        """
+        if not summary:
+            return {}
+        
+        truncated_summary = self._truncate_text(summary, max_chars=3000)
+        
+        prompt = f"""基于以下视频信息，提取并解释所有专业名词、人名、地名、概念等。
+
+视频标题：{title}
+视频摘要：{truncated_summary}
+
+要求：
+1. 提取视频中提到的所有需要解释的名词
+2. 为每个名词提供2-3句话的科普解释
+3. 解释要通俗易懂，适合普通读者
+4. 以JSON格式返回
+
+输出格式：
+{{
+  "名词1": "解释1",
+  "名词2": "解释2"
+}}
+
+如果没有需要解释的名词，返回空对象 {{}}。"""
+        
+        response = self._call_ai(prompt)
+        
+        # 尝试解析JSON
+        try:
+            import json
+            # 提取JSON部分
+            json_match = re.search(r'\{[\s\S]*\}', response)
+            if json_match:
+                return json.loads(json_match.group(0))
+        except:
+            pass
+        
+        # 解析失败，尝试从文本解析
+        return self._parse_knowledge_text(response)
+    
+    def _parse_knowledge_text(self, text: str) -> Dict[str, str]:
+        """从文本解析科普知识"""
+        knowledge = {}
+        
+        # 匹配 "- **名词**：解释" 或 "名词：解释" 格式
+        pattern = r'(?:^|\n)\s*[-*]*\s*\*\*(.+?)\*\*\s*[:：]\s*(.+?)(?=\n|$)'
+        matches = re.findall(pattern, text, re.MULTILINE)
+        
+        for name, explanation in matches:
+            knowledge[name.strip()] = explanation.strip()
+        
+        # 如果没有匹配到，尝试其他格式
+        if not knowledge:
+            pattern2 = r'(?:^|\n)\s*\d+[\.、]\s*(.+?)\s*[:：]\s*(.+?)(?=\n|$)'
+            matches = re.findall(pattern2, text, re.MULTILINE)
+            for name, explanation in matches:
+                knowledge[name.strip()] = explanation.strip()
+        
+        return knowledge
+    
     def _truncate_text(self, text: str, max_chars: int = 8000) -> str:
         """截断文本以适应token限制"""
         if len(text) <= max_chars:
