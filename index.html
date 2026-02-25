@@ -710,13 +710,7 @@ const CHARS = [
     firstName: 'Debbie', lastName: 'Gallagher',
     tagline: "Don't underestimate her.",
     quote: '"I know exactly what I\'m worth. And I\'m not giving it away cheap." — Debbie Gallagher',
-    apps: [
-      {
-        id: 'dupe', icon: 'flaskConical', status: 'live', page: 'dupe-finder.html',
-        name: '化妆品平替大全',
-        desc: '输入大牌产品，AI 解析成分表，找功效相近的平价平替，附详细差异对比。',
-      }
-    ]
+    apps: []
   },
   {
     id: 'fiona', group: 'family',
@@ -730,7 +724,13 @@ const CHARS = [
     firstName: 'Lip', lastName: 'Gallagher',
     tagline: 'Too smart for his own good.',
     quote: '"The thing about being smart is everyone expects you to fix their mess." — Lip Gallagher',
-    apps: []
+    apps: [
+      {
+        id: 'lip-learning', icon: 'brainCircuit', status: 'live', page: 'lip-learning.html',
+        name: '智能学习助手',
+        desc: '自动分析YouTube博主内容，提取核心知识点，生成结构化学习笔记，同步到NotebookLM。',
+      }
+    ]
   },
   {
     id: 'ian', group: 'family',

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lip 智能学习助手</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg: #FAFAF9;
+            --bg-2: #FFFFFF;
+            --bg-3: #F5F5F4;
+            --accent: #C84B26;
+            --text: #1C1917;
+            --text-2: #57534E;
+            --text-3: #A8A29E;
+            --border: rgba(28,25,23,0.08);
+            --border-hi: rgba(28,25,23,0.15);
+            --r-md: 12px;
+            --r-lg: 16px;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .app-header {
+            background: var(--bg-2);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg-3);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-2);
+            transition: all 0.2s ease;
+        }
+        
+        .back-btn:hover {
+            background: var(--border);
+            color: var(--text);
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .app-subtitle {
+            font-size: 13px;
+            color: var(--text-3);
+            margin-left: auto;
+        }
+        
+        .app-content {
+            padding: 24px;
+            height: calc(100vh - 77px);
+            overflow-y: auto;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: var(--r-lg);
+            padding: 40px;
+            color: white;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        
+        .hero-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .hero-desc {
+            font-size: 16px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 24px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: var(--r-md);
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-2);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+        
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .channel-card {
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: var(--r-md);
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+        
+        .channel-card:hover {
+            border-color: var(--border-hi);
+            transform: translateY(-2px);
+        }
+        
+        .channel-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        
+        .channel-category {
+            display: inline-block;
+            background: var(--bg-3);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-2);
+            margin-bottom: 12px;
+        }
+        
+        .channel-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-3);
+            margin-top: 12px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: var(--r-md);
+            border: none;
+            font-family: inherit;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #A83B1C;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-3);
+            color: var(--text);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+        
+        .info-box {
+            background: var(--bg-3);
+            border-radius: var(--r-md);
+            padding: 20px;
+            margin-top: 32px;
+        }
+        
+        .info-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        
+        .info-desc {
+            font-size: 13px;
+            color: var(--text-2);
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <button class="back-btn" onclick="window.history.back()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+        </button>
+        <div class="app-title">智能学习助手</div>
+        <div class="app-subtitle">Lip Gallagher</div>
+    </div>
+    
+    <div class="app-content">
+        <div class="hero-section">
+            <h1 class="hero-title">Lip 智能学习助手</h1>
+            <p class="hero-desc">自动分析YouTube博主内容，提取核心知识点，生成结构化学习笔记，同步到NotebookLM</p>
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="runAnalysis()">立即分析</button>
+                <button class="btn btn-secondary" onclick="viewDocs()">查看文档</button>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">11</div>
+                <div class="stat-label">监控频道</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">55</div>
+                <div class="stat-label">每日视频</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">02:00</div>
+                <div class="stat-label">执行时间</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">自动同步</div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">📺 监控的YouTube频道</h2>
+        <div class="channels-grid" id="channels-container">
+            <!-- 频道卡片将通过JavaScript动态生成 -->
+        </div>
+        
+        <div class="info-box">
+            <div class="info-title">工作流程说明</div>
+            <div class="info-desc">
+                1. 每天凌晨2点自动执行<br>
+                2. 每个频道分析5个最新视频<br>
+                3. 提取核心知识点和科学术语<br>
+                4. 生成结构化学习笔记<br>
+                5. 自动同步到NotebookLM和飞书文档
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 频道数据
+        const channels = [
+            { name: "Lex Fridman", category: "深度访谈", analyzed: 12, priority: "high" },
+            { name: "Joe Rogan Experience", category: "深度访谈", analyzed: 8, priority: "high" },
+            { name: "The Diary Of A CEO", category: "商业/领导力", analyzed: 15, priority: "high" },
+            { name: "Dwarkesh Patel", category: "AI研究", analyzed: 6, priority: "high" },
+            { name: "Jordan B Peterson", category: "心理学/哲学", analyzed: 20, priority: "high" },
+            { name: "No Code", category: "AI/技术", analyzed: 5, priority: "medium" },
+            { name: "Matthew Berman", category: "AI新闻", analyzed: 7, priority: "medium" },
+            { name: "Futurepedia", category: "AI工具", analyzed: 4, priority: "medium" },
+            { name: "AI Foundations", category: "AI教育", analyzed: 3, priority: "medium" }
+        ];
+
+        // 渲染频道卡片
+        function renderChannels() {
+            const container = document.getElementById('channels-container');
+            container.innerHTML = '';
+            
+            channels.forEach(channel => {
+                const card = document.createElement('div');
+                card.className = 'channel-card';
+                
+                const priorityEmoji = {
+                    high: '🔥',
+                    medium: '⭐',
+                    low: '📌'
+                }[channel.priority];
+                
+                card.innerHTML = `
+                    <div class="channel-name">${priorityEmoji} ${channel.name}</div>
+                    <div class="channel-category">${channel.category}</div>
+                    <div class="channel-stats">
+                        <span>📊 已分析: ${channel.analyzed}</span>
+                        <span>🎯 优先级: ${channel.priority}</span>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // 模拟分析功能
+        function runAnalysis() {
+            alert('开始分析最新视频...\n\n这将触发后台处理流程，分析结果将自动同步到NotebookLM和飞书文档。');
+        }
+
+        // 查看文档
+        function viewDocs() {
+            window.open('https://github.com/Shan-2024/clawd-memory/tree/main/the-gallaghers/lip', '_blank');
+        }
+
+        // 页面加载完成后渲染
+        document.addEventListener('DOMContentLoaded', renderChannels);
+    </script>
+</body>
+</html>
