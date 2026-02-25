@@ -1,0 +1,77 @@
+{
+  "version": "1.0",
+  "max_channels": 10,
+  "daily_limit_per_channel": 5,
+  "channels": [
+    {
+      "id": "ch_20260225101051",
+      "url": "https://www.youtube.com/@testchannel",
+      "name": "@testchannel",
+      "display_name": "测试频道",
+      "added_at": "2026-02-25T10:10:51.549575",
+      "status": "active",
+      "stats": {
+        "total_videos": 100,
+        "analyzed_count": 0,
+        "last_analyzed_at": null
+      },
+      "sync_to_feishu": false,
+      "feishu_doc_token": null,
+      "analyzed_video_ids": []
+    },
+    {
+      "id": "ch_20260225101158",
+      "url": "https://www.youtube.com/@testchannel",
+      "name": "@testchannel",
+      "display_name": "测试频道",
+      "added_at": "2026-02-25T10:11:58.696241",
+      "status": "active",
+      "stats": {
+        "total_videos": 0,
+        "analyzed_count": 0,
+        "last_analyzed_at": null
+      },
+      "sync_to_feishu": false,
+      "feishu_doc_token": null,
+      "analyzed_video_ids": []
+    },
+    {
+      "id": "ch_20260225101234",
+      "url": "https://www.youtube.com/@test",
+      "name": "test",
+      "display_name": "test",
+      "added_at": "2026-02-25T10:12:34.525698",
+      "status": "active",
+      "stats": {
+        "total_videos": 2,
+        "analyzed_count": 0,
+        "last_analyzed_at": null
+      },
+      "sync_to_feishu": false,
+      "feishu_doc_token": null,
+      "analyzed_video_ids": []
+    },
+    {
+      "id": "ch_20260225101614",
+      "url": "https://www.youtube.com/@lexfridman",
+      "name": "lexfridman",
+      "display_name": "lexfridman",
+      "added_at": "2026-02-25T10:16:14.940719",
+      "status": "active",
+      "stats": {
+        "total_videos": 2,
+        "analyzed_count": 0,
+        "last_analyzed_at": null
+      },
+      "sync_to_feishu": false,
+      "feishu_doc_token": null,
+      "analyzed_video_ids": []
+    }
+  ],
+  "settings": {
+    "auto_sync_feishu": false,
+    "auto_sync_notebooklm": false,
+    "analysis_model": "kimi-k2.5",
+    "proxy": null
+  }
+}

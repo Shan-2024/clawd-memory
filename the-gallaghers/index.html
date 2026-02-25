@@ -65,7 +65,8 @@ const characters = [
     { id: 'kevin', name: 'Kevin', fullName: 'Kevin Ball', desc: 'Simple, direct, always there', color: '#2563EB', apps: [{ id: 'english', name: 'Shameless English', desc: 'Learn from iconic quotes & scenes', icon: '☐' }] },
     { id: 'carl', name: 'Carl', fullName: 'Carl Gallagher', desc: 'Discipline, justice, law', color: '#DC2626', apps: [{ id: 'fakao', name: '法考宝典', desc: '0基础法考学习助手', icon: '⚖' }] },
     { id: 'debbie', name: 'Debbie', fullName: 'Debbie Gallagher', desc: 'DIY genius, practical solutions', color: '#EA580C', apps: [{ id: 'dupes', name: '化妆品平替大全', desc: '成分对比分析，大牌平替推荐', icon: '⚗' }] },
-    { id: 'svetlana', name: 'Svetlana', fullName: 'Svetlana', desc: 'Business, hustle, side income', color: '#7C3AED', apps: [{ id: 'hustle', name: '副业管理', desc: 'Track your side businesses', icon: '$' }] }
+    { id: 'svetlana', name: 'Svetlana', fullName: 'Svetlana', desc: 'Business, hustle, side income', color: '#7C3AED', apps: [{ id: 'hustle', name: '副业管理', desc: 'Track your side businesses', icon: '$' }] },
+    { id: 'lip', name: 'Lip', fullName: 'Lip Gallagher', desc: 'Knowledge management, learning assistant', color: '#059669', apps: [{ id: 'learning', name: '智能学习助手', desc: 'YouTube博主内容自动分析，生成学习笔记', icon: '📚' }] }
 ];
 
 let currentChar = null;
@@ -102,11 +103,323 @@ function openApp(id) {
     const app = currentChar.apps.find(a => a.id === id);
     document.getElementById('app-title').textContent = app.name;
     document.getElementById('app-character').textContent = currentChar.name;
-    document.getElementById('app-content').innerHTML = `<div class="max-w-2xl mx-auto bg-white border border-gray-200 rounded-2xl p-8"><h4 class="text-2xl font-bold mb-4">${app.name}</h4><p class="text-gray-500">App content coming soon...</p></div>`;
+    
+    if (id === 'learning') {
+        document.getElementById('app-content').innerHTML = `
+            <div class="max-w-6xl mx-auto p-6">
+                <div class="mb-8">
+                    <h4 class="text-2xl font-bold mb-2">智能学习助手</h4>
+                    <p class="text-gray-500">自动分析YouTube博主内容，生成结构化学习笔记</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <!-- 添加博主 -->
+                    <div class="bg-white border border-gray-200 rounded-2xl p-6">
+                        <h5 class="font-semibold text-lg mb-4">添加博主</h5>
+                        <div class="space-y-4">
+                            <input id="channel-url" type="text" placeholder="YouTube频道链接" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                            <button onclick="addChannel()" class="w-full bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors">添加监控</button>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-4">支持格式：@username、/c/name、/channel/UCxxx</p>
+                    </div>
+                    
+                    <!-- 状态概览 -->
+                    <div class="bg-white border border-gray-200 rounded-2xl p-6">
+                        <h5 class="font-semibold text-lg mb-4">监控状态</h5>
+                        <div id="status-container" class="space-y-3">
+                            <div class="text-center py-8 text-gray-400">
+                                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-2"></div>
+                                <p>加载中...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 快速操作 -->
+                    <div class="bg-white border border-gray-200 rounded-2xl p-6">
+                        <h5 class="font-semibold text-lg mb-4">快速操作</h5>
+                        <div class="space-y-3">
+                            <button onclick="refreshStatus()" class="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">刷新状态</button>
+                            <button onclick="runAnalysis()" class="w-full px-4 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors">立即分析</button>
+                            <button onclick="viewKnowledge()" class="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">查看科普词典</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 笔记列表 -->
+                <div class="bg-white border border-gray-200 rounded-2xl p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h5 class="font-semibold text-lg">学习笔记</h5>
+                        <div class="flex gap-2">
+                            <input id="search-notes" type="text" placeholder="搜索笔记..." class="px-4 py-2 border border-gray-300 rounded-lg w-64">
+                            <select id="filter-channel" class="px-4 py-2 border border-gray-300 rounded-lg">
+                                <option value="">所有博主</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="notes-container" class="space-y-4">
+                        <div class="text-center py-8 text-gray-400">
+                            <p>暂无笔记，添加博主后会自动生成</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        loadStatus();
+        loadNotes();
+    } else {
+        document.getElementById('app-content').innerHTML = `<div class="max-w-2xl mx-auto bg-white border border-gray-200 rounded-2xl p-8"><h4 class="text-2xl font-bold mb-4">${app.name}</h4><p class="text-gray-500">App content coming soon...</p></div>`;
+    }
     appContainer.classList.remove('hidden');
 }
 
 document.getElementById('back-btn').onclick = () => appContainer.classList.add('hidden');
+
+// Lip 学习助手相关函数
+const API_BASE = 'http://localhost:8888/api';
+
+async function loadStatus() {
+    try {
+        const response = await fetch(`${API_BASE}/status`);
+        const result = await response.json();
+        
+        if (result.success) {
+            const data = result.data;
+            const statusContainer = document.getElementById('status-container');
+            statusContainer.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">监控博主</span>
+                        <span class="text-emerald-600 font-semibold">${data.active_channels}/${data.total_channels}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">已分析视频</span>
+                        <span class="text-emerald-600 font-semibold">${data.analyzed_videos}/${data.total_videos}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">科普词条</span>
+                        <span class="text-emerald-600 font-semibold">${data.knowledge_count}</span>
+                    </div>
+                    <div class="pt-4 border-t border-gray-200">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-medium">总体进度</span>
+                            <span class="text-sm text-emerald-600">${data.progress_percent.toFixed(1)}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-emerald-600 h-2 rounded-full transition-all" style="width: ${data.progress_percent}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 同时加载频道列表到过滤器
+            loadChannelsFilter();
+        }
+    } catch (error) {
+        console.error('加载状态失败:', error);
+        document.getElementById('status-container').innerHTML = `
+            <div class="text-center py-8 text-red-500">
+                <p>API服务器未启动</p>
+                <p class="text-sm mt-2">请运行: python web_api.py</p>
+            </div>
+        `;
+    }
+}
+
+async function loadNotes() {
+    try {
+        const channelFilter = document.getElementById('filter-channel')?.value || '';
+        const searchQuery = document.getElementById('search-notes')?.value || '';
+        
+        let url = `${API_BASE}/notes`;
+        if (channelFilter) url += `?channel=${channelFilter}`;
+        if (searchQuery) url += (channelFilter ? '&' : '?') + `search=${encodeURIComponent(searchQuery)}`;
+        
+        const response = await fetch(url);
+        const result = await response.json();
+        
+        const notesContainer = document.getElementById('notes-container');
+        
+        if (result.success && result.data.length > 0) {
+            notesContainer.innerHTML = result.data.map(note => `
+                <div class="border border-gray-200 rounded-xl p-4 hover:border-emerald-300 transition-colors">
+                    <div class="flex justify-between items-start mb-2">
+                        <h6 class="font-semibold text-sm">${note.title}</h6>
+                        <span class="text-xs text-gray-400">${note.channel}</span>
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        ${note.tags.map(tag => `<span class="text-xs px-2 py-1 bg-emerald-50 text-emerald-600 rounded">#${tag}</span>`).join('')}
+                    </div>
+                    <div class="mt-2 text-xs text-gray-500">
+                        知识点: ${note.knowledge_keys.length} 个
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            notesContainer.innerHTML = `
+                <div class="text-center py-8 text-gray-400">
+                    <p>暂无笔记${searchQuery ? '（匹配搜索条件）' : ''}</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('加载笔记失败:', error);
+    }
+}
+
+async function loadChannelsFilter() {
+    try {
+        const response = await fetch(`${API_BASE}/channels`);
+        const result = await response.json();
+        
+        if (result.success) {
+            const filter = document.getElementById('filter-channel');
+            filter.innerHTML = '<option value="">所有博主</option>' + 
+                result.data.map(ch => `<option value="${ch.name}">${ch.display_name || ch.name}</option>`).join('');
+        }
+    } catch (error) {
+        console.error('加载频道过滤器失败:', error);
+    }
+}
+
+async function addChannel() {
+    const urlInput = document.getElementById('channel-url');
+    const url = urlInput.value.trim();
+    const btn = event.target;
+    
+    if (!url) {
+        alert('请输入YouTube频道链接');
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.textContent = '添加中...';
+    
+    try {
+        const response = await fetch(`${API_BASE}/channels`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert(result.message);
+            urlInput.value = '';
+            loadStatus();
+        } else {
+            alert('添加失败: ' + (result.error || '未知错误'));
+        }
+    } catch (error) {
+        alert('请求失败，请检查API服务器是否运行');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '添加监控';
+    }
+}
+
+function refreshStatus() {
+    loadStatus();
+    loadNotes();
+}
+
+async function runAnalysis() {
+    if (!confirm('确定要立即开始分析吗？这将分析所有博主的新视频。')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/analyze`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('分析任务已在后台启动，请稍后刷新查看进度');
+        } else {
+            alert('启动失败: ' + (result.error || '未知错误'));
+        }
+    } catch (error) {
+        alert('请求失败，请检查API服务器是否运行');
+    }
+}
+
+async function viewKnowledge() {
+    try {
+        const response = await fetch(`${API_BASE}/knowledge`);
+        const result = await response.json();
+        
+        if (result.success) {
+            let content = `<h6 class="font-semibold mb-4">科普词典（共 ${result.total} 条）</h6>`;
+            
+            if (result.data.length > 0) {
+                content += `<div class="space-y-3 max-h-96 overflow-y-auto">`;
+                content += result.data.slice(0, 20).map(item => `
+                    <div class="border-l-4 border-emerald-500 pl-3 py-1">
+                        <strong class="text-emerald-700">${item.name}</strong>
+                        <p class="text-sm text-gray-600 mt-1">${item.explanation}</p>
+                    </div>
+                `).join('');
+                
+                if (result.total > 20) {
+                    content += `<p class="text-center text-gray-400 mt-4">...还有 ${result.total - 20} 条</p>`;
+                }
+                content += `</div>`;
+            } else {
+                content += `<p class="text-gray-400 text-center py-4">暂无科普知识</p>`;
+            }
+            
+            // 显示弹窗
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] overflow-hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        ${content}
+                        <button onclick="this.closest('.fixed').remove()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200">关闭</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+    } catch (error) {
+        alert('加载科普词典失败');
+    }
+}
+
+// 搜索和过滤事件监听
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-notes');
+    const filterSelect = document.getElementById('filter-channel');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', debounce(loadNotes, 300));
+    }
+    if (filterSelect) {
+        filterSelect.addEventListener('change', loadNotes);
+    }
+});
+
+// 防抖函数
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
 
 renderChars();
 selectChar('frank');

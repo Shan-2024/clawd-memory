@@ -1,0 +1,8 @@
+# Lip Learning Assistant
+/notebooks/*
+!notebooks/.gitkeep
+*.log
+__pycache__/
+*.pyc
+.env
+.DS_Store
