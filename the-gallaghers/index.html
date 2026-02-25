@@ -139,9 +139,10 @@ function openApp(id) {
                         <h5 class="font-semibold text-lg mb-4">快速操作</h5>
                         <div class="space-y-3">
                             <button onclick="refreshStatus()" class="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">刷新状态</button>
-                            <button onclick="runAnalysis()" class="w-full px-4 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors">立即分析</button>
+                            <button onclick="runAnalysis()" class="w-full px-4 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors">立即分析（本地AI）</button>
+                            <button onclick="runPassThrough()" class="w-full px-4 py-2 bg-purple-50 text-purple-700 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors" title="YouTube→NotebookLM，避免IP限制">⚡ 直通模式（推荐）</button>
                             <button onclick="viewKnowledge()" class="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">查看科普词典</button>
-                            <button onclick="syncNotebookLM()" class="w-full px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">同步到NotebookLM</button>
+                            <button onclick="syncNotebookLM()" class="w-full px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">同步本地笔记到NotebookLM</button>
                             <button onclick="viewNotebookLM()" class="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">查看NotebookLM笔记本</button>
                         </div>
                     </div>
@@ -405,6 +406,38 @@ async function viewNotebookLM() {
         }
     } catch (error) {
         alert('加载NotebookLM列表失败');
+    }
+}
+
+async function runPassThrough() {
+    const channelFilter = document.getElementById('filter-channel')?.value || '';
+    
+    const message = channelFilter 
+        ? `直通模式将把 "${channelFilter}" 的最新视频直接推送到NotebookLM，让NotebookLM自己去抓取YouTube内容（避免IP限制）。\n\n继续吗？`
+        : `直通模式将把所有博主的最新视频直接推送到NotebookLM，让NotebookLM自己去抓取YouTube内容（避免IP限制）。\n\n继续吗？`;
+    
+    if (!confirm(message)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/analyze/pass-through`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ channel: channelFilter })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            const data = result.data;
+            alert(`直通模式完成！\n\n博主: ${data.channel}\n视频: ${data.total} 个\n新增: ${data.added} 个\n跳过: ${data.skipped} 个\n失败: ${data.failed} 个\n\nNotebookLM笔记本: ${data.notebook_title}`);
+            loadStatus();
+        } else {
+            alert('直通模式失败：' + (result.error || '未知错误'));
+        }
+    } catch (error) {
+        alert('请求失败，请检查API服务器是否运行');
     }
 }
 

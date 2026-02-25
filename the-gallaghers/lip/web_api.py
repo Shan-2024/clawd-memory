@@ -103,6 +103,8 @@ class LipAPIHandler(BaseHTTPRequestHandler):
             self._handle_delete_channel(data)
         elif path == '/api/analyze':
             self._handle_analyze_now(data)
+        elif path == '/api/analyze/pass-through':
+            self._handle_analyze_pass_through(data)
         elif path == '/api/sync/notebooklm':
             self._handle_sync_notebooklm(data)
         else:
@@ -345,6 +347,28 @@ class LipAPIHandler(BaseHTTPRequestHandler):
             self._set_headers(500)
             self.wfile.write(json.dumps({'error': str(e)}).encode())
     
+    def _handle_analyze_pass_through(self, data):
+        """直通模式分析 - 让NotebookLM直接抓取YouTube"""
+        try:
+            from youtube.notebooklm_pipeline import process_youtube_channel
+            
+            channel_name = data.get('channel', '').strip()
+            
+            if not channel_name:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({'error': 'Channel name is required'}, ensure_ascii=False).encode())
+                return
+            
+            # 直通模式处理
+            result = process_youtube_channel(channel_name)
+            
+            self._set_headers(200)
+            self.wfile.write(json.dumps({'success': True, 'data': result}, ensure_ascii=False).encode())
+            
+        except Exception as e:
+            self._set_headers(500)
+            self.wfile.write(json.dumps({'error': str(e)}).encode())
+    
     def _handle_sync_notebooklm(self, data):
         """同步到NotebookLM"""
         try:
@@ -417,10 +441,11 @@ def run_server(port=8888):
     print(f"     POST /api/channels            - 添加频道")
     print(f"     POST /api/channels/delete     - 删除频道")
     print(f"     GET  /api/notes               - 笔记列表")
-    print(f"     GET  /api/knowledge           - 知识词典")
-    print(f"     POST /api/analyze             - 立即分析")
-    print(f"     GET  /api/notebooklm/notebooks - NotebookLM笔记本列表")
-    print(f"     POST /api/sync/notebooklm     - 同步到NotebookLM")
+    print(f"     GET  /api/knowledge               - 知识词典")
+    print(f"     POST /api/analyze                 - 立即分析（本地AI）")
+    print(f"     POST /api/analyze/pass-through    - 直通模式（YouTube→NotebookLM）")
+    print(f"     GET  /api/notebooklm/notebooks    - NotebookLM笔记本列表")
+    print(f"     POST /api/sync/notebooklm         - 同步本地笔记到NotebookLM")
     print(f"\n按 Ctrl+C 停止服务器")
     print("-" * 50)
     

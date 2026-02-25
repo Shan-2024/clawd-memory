@@ -91,15 +91,35 @@ class NotebookLMSync:
         print(f"  创建新笔记本: {title}")
         return self.create_notebook(title)
     
-    def add_source(self, notebook_id: str, file_path: str, title: str = None) -> bool:
+    def add_source(self, notebook_id: str, file_path: str = None, url: str = None, title: str = None) -> bool:
         """
-        添加笔记文件到笔记本
+        添加笔记文件或URL到笔记本
         
         Args:
             notebook_id: NotebookLM笔记本ID
-            file_path: Markdown文件路径
+            file_path: Markdown文件路径（本地文件）
+            url: YouTube或其他URL（让NotebookLM自己去抓取）
             title: 自定义标题（可选）
         """
+        # 如果提供的是URL，直接让NotebookLM去抓取
+        if url:
+            args = ['source', 'add', url]
+            if title:
+                args.extend(['--title', title])
+            
+            returncode, stdout, stderr = self._run_notebooklm(args)
+            
+            if returncode != 0:
+                print(f"  ❌ 添加URL失败: {stderr}")
+                return False
+            
+            return True
+        
+        # 本地文件模式
+        if not file_path:
+            print(f"  ⚠️  必须提供file_path或url")
+            return False
+            
         if not os.path.exists(file_path):
             print(f"  ⚠️  文件不存在: {file_path}")
             return False
@@ -120,6 +140,14 @@ class NotebookLMSync:
             return False
         
         return True
+    
+    def add_youtube_video(self, notebook_id: str, video_url: str, title: str = None) -> bool:
+        """
+        直接添加YouTube视频URL到NotebookLM
+        让NotebookLM自己去抓取，避免IP被封
+        """
+        print(f"  📺 添加YouTube视频到NotebookLM: {title or video_url}")
+        return self.add_source(notebook_id, url=video_url, title=title)
     
     def list_sources(self, notebook_id: str) -> List[Dict]:
         """获取笔记本的所有source"""

@@ -66,6 +66,29 @@
       "sync_to_feishu": false,
       "feishu_doc_token": null,
       "analyzed_video_ids": []
+    },
+    {
+      "id": "ch_20260225103828",
+      "url": "https://www.youtube.com/@JordanBPeterson/videos",
+      "name": "JordanBPeterson",
+      "display_name": "JordanBPeterson",
+      "added_at": "2026-02-25T10:38:28.277774",
+      "status": "active",
+      "stats": {
+        "total_videos": 5,
+        "analyzed_count": 6,
+        "last_analyzed_at": "2026-02-25T10:44:51.409899"
+      },
+      "sync_to_feishu": false,
+      "feishu_doc_token": null,
+      "analyzed_video_ids": [
+        "UCL_f53ZEJxp8TtlOkHwMV9Q",
+        "Wv7lEyck2mg",
+        "IsXdO5RD_NU",
+        "epoRGnCWyXw",
+        "h69SwIn-bA4",
+        "Nn1Np7mrFck"
+      ]
     }
   ],
   "settings": {
