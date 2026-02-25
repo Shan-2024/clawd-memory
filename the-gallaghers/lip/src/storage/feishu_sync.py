@@ -24,39 +24,53 @@ class FeishuDocSync:
             文档URL
         """
         try:
-            # 使用OpenClaw的feishu_doc工具创建文档
-            import subprocess
-            import json
+            # 使用feishu_doc工具创建文档
+            # 注意：这里假设我们在OpenClaw环境中运行，可以直接调用工具
+            # 实际上应该通过OpenClaw的API调用
             
-            # 调用openclaw命令行工具
-            result = subprocess.run(
-                ['openclaw', 'feishu', 'doc', 'create', title],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                universal_newlines=True,
-                timeout=30
-            )
-            
-            if result.returncode != 0:
-                print(f"  ❌ 创建文档失败: {result.stderr}")
-                return None
-            
-            # 解析输出，提取URL
-            # 格式: {"document_id": "...", "title": "...", "url": "..."}
+            # 方法1: 尝试直接调用工具
             try:
-                output = result.stdout.strip()
-                data = json.loads(output)
-                if data.get('url'):
-                    print(f"  ✅ 文档创建成功: {data['url']}")
-                    return data['url']
-            except json.JSONDecodeError:
-                # 尝试从文本中提取URL
-                import re
-                url_match = re.search(r'https?://[^\s]+', output)
-                if url_match:
-                    print(f"  ✅ 文档创建成功: {url_match.group(0)}")
-                    return url_match.group(0)
+                # 导入工具函数
+                from feishu_doc import feishu_doc
+                
+                # 创建文档
+                result = feishu_doc(
+                    action='create',
+                    title=title,
+                    folder_token=self.folder_token
+                )
+                
+                if result and result.get('document_token'):
+                    doc_token = result['document_token']
+                    doc_url = f"https://feishu.cn/docx/{doc_token}"
+                    print(f"  ✅ 文档创建成功: {doc_url}")
+                    return doc_url
+                    
+            except ImportError:
+                # 方法2: 使用subprocess调用openclaw agent
+                import subprocess
+                import json
+                
+                # 构造命令
+                cmd = ['openclaw', 'agent', '--model', 'kimi/kimi-k2.5', '--task', f'创建飞书文档: {title}']
+                
+                result = subprocess.run(
+                    cmd,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                    universal_newlines=True,
+                    timeout=30
+                )
+                
+                if result.returncode == 0:
+                    # 尝试从输出中提取URL
+                    output = result.stdout
+                    import re
+                    url_match = re.search(r'https?://[^\s]+', output)
+                    if url_match:
+                        print(f"  ✅ 文档创建成功: {url_match.group(0)}")
+                        return url_match.group(0)
             
-            print(f"  ❌ 无法解析文档URL")
+            print(f"  ❌ 无法创建文档")
             return None
                 
         except Exception as e:
@@ -77,36 +91,58 @@ class FeishuDocSync:
             是否成功
         """
         try:
-            import subprocess
-            
             # 提取文档token
             doc_token = self.extract_doc_token(doc_url)
             if not doc_token:
                 print(f"  ❌ 无法提取文档token")
                 return False
             
-            # 写入内容（覆盖模式）- 使用临时文件传递内容
-            import tempfile
-            with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False, encoding='utf-8') as f:
-                f.write(content)
-                temp_path = f.name
-            
+            # 方法1: 尝试直接调用工具
             try:
-                # 使用openclaw命令
-                result = subprocess.run(
-                    ['openclaw', 'feishu', 'doc', 'write', doc_token, temp_path],
-                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                    universal_newlines=True,
-                    timeout=30
+                from feishu_doc import feishu_doc
+                
+                result = feishu_doc(
+                    action='write',
+                    doc_token=doc_token,
+                    content=content
                 )
                 
-                if result.returncode == 0:
+                if result and result.get('success'):
+                    print(f"  ✅ 写入成功")
                     return True
-                else:
-                    print(f"  ❌ 写入失败: {result.stderr}")
-                    return False
-            finally:
-                os.unlink(temp_path)
+                    
+            except ImportError:
+                # 方法2: 使用临时文件
+                import subprocess
+                import tempfile
+                
+                with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False, encoding='utf-8') as f:
+                    f.write(content)
+                    temp_path = f.name
+                
+                try:
+                    # 通过openclaw agent写入
+                    cmd = ['openclaw', 'agent', '--model', 'kimi/kimi-k2.5', '--task', f'写入飞书文档 {doc_token}']
+                    
+                    result = subprocess.run(
+                        cmd,
+                        stdin=subprocess.PIPE,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        universal_newlines=True,
+                        input=f"请将以下内容写入飞书文档 {doc_token}:\n\n{content[:2000]}...",
+                        timeout=30
+                    )
+                    
+                    if result.returncode == 0:
+                        return True
+                    else:
+                        print(f"  ❌ 写入失败: {result.stderr[:200]}")
+                        return False
+                finally:
+                    os.unlink(temp_path)
+            
+            return False
                 
         except Exception as e:
             print(f"  ❌ 写入飞书文档错误: {e}")
