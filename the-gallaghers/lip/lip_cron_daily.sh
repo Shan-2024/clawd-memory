@@ -16,9 +16,9 @@ echo "================================================" >> "$LOG_FILE"
 echo "🚀 Lip 每日新闻开始运行 - $(date '+%Y-%m-%d %H:%M:%S')" >> "$LOG_FILE"
 echo "================================================" >> "$LOG_FILE"
 
-# 运行每日新闻生成
-echo "📰 生成每日学习新闻..." >> "$LOG_FILE"
-python3 lip_simple_daily.py >> "$LOG_FILE" 2>&1
+# 运行每日新闻生成（使用NotebookLM集成版）
+echo "📰 生成每日学习新闻（NotebookLM集成版）..." >> "$LOG_FILE"
+python3 lip_notebooklm_daily.py >> "$LOG_FILE" 2>&1
 
 # 检查是否生成成功
 if [ -f "daily_news_$(date '+%Y-%m-%d').txt" ]; then
