@@ -73,24 +73,24 @@ class AIAnalyzer:
         
         truncated_summary = self._truncate_text(summary, max_chars=3000)
         
-        prompt = f"""基于以下视频信息，提取并解释所有专业名词、人名、地名、概念等。
+        prompt = f"""分析以下视频内容，提取所有需要解释的专业术语、技术概念、人名、公司名等，并为每个提供简短的科普解释（2-3句话）。
 
 视频标题：{title}
 视频摘要：{truncated_summary}
 
-要求：
-1. 提取视频中提到的所有需要解释的名词
-2. 为每个名词提供2-3句话的科普解释
-3. 解释要通俗易懂，适合普通读者
-4. 以JSON格式返回
+重要提示：
+- 必须提取标题和摘要中提到的所有技术术语、人名、公司名、产品名
+- 解释要简单易懂，让非专业人士也能理解
+- 输出格式必须是JSON
 
-输出格式：
+输出格式示例：
 {{
-  "名词1": "解释1",
-  "名词2": "解释2"
+  "OpenClaw": "一个开源的AI代理框架，可以自动执行任务并与用户通过聊天应用交互",
+  "GitHub": "全球最大的代码托管平台，程序员在此分享和协作开发开源项目",
+  "AI Agent": "人工智能代理，能够自主决策和执行任务的智能程序"
 }}
 
-如果没有需要解释的名词，返回空对象 {{}}。"""
+请输出JSON（只输出JSON，不要其他文字）："""
         
         response = self._call_ai(prompt)
         
@@ -100,7 +100,9 @@ class AIAnalyzer:
             # 提取JSON部分
             json_match = re.search(r'\{[\s\S]*\}', response)
             if json_match:
-                return json.loads(json_match.group(0))
+                result = json.loads(json_match.group(0))
+                # 过滤空值
+                return {k: v for k, v in result.items() if k and v}
         except:
             pass
         

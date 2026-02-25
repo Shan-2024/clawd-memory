@@ -46,13 +46,18 @@
       "status": "active",
       "stats": {
         "total_videos": 2,
-        "analyzed_count": 1,
+        "analyzed_count": 6,
         "last_analyzed_at": null
       },
       "sync_to_feishu": false,
       "feishu_doc_token": null,
       "analyzed_video_ids": [
-        "PG613H8hJco"
+        "PG613H8hJco",
+        "HgLA177j2iE",
+        "VLSmiATaGjo",
+        "9t_iCUL_FIM",
+        "IZlon6fDfJU",
+        "GSCaKgp-POE"
       ]
     },
     {
