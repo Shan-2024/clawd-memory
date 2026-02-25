@@ -109,6 +109,8 @@ class LipAPIHandler(BaseHTTPRequestHandler):
             self._handle_sync_notebooklm(data)
         elif path == '/api/sync/feishu':
             self._handle_sync_feishu(data)
+        elif path == '/api/channels/mode':
+            self._handle_set_channel_mode(data)
         else:
             self._set_headers(404)
             self.wfile.write(json.dumps({'error': 'Not found'}).encode())
@@ -421,6 +423,38 @@ class LipAPIHandler(BaseHTTPRequestHandler):
             
             self._set_headers(200)
             self.wfile.write(json.dumps(result, ensure_ascii=False).encode())
+            
+        except Exception as e:
+            self._set_headers(500)
+            self.wfile.write(json.dumps({'error': str(e)}).encode())
+    
+    def _handle_set_channel_mode(self, data):
+        """设置频道分析模式"""
+        try:
+            channel_name = data.get('channel', '').strip()
+            mode = data.get('mode', '').strip()
+            
+            if not channel_name or not mode:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({'error': 'Channel name and mode are required'}, ensure_ascii=False).encode())
+                return
+            
+            if mode not in ['local', 'pass_through']:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({'error': 'Mode must be "local" or "pass_through"'}, ensure_ascii=False).encode())
+                return
+            
+            success = config_manager.set_channel_analysis_mode(channel_name, mode)
+            
+            if success:
+                self._set_headers(200)
+                self.wfile.write(json.dumps({
+                    'success': True,
+                    'message': f'Channel {channel_name} set to {mode} mode'
+                }, ensure_ascii=False).encode())
+            else:
+                self._set_headers(404)
+                self.wfile.write(json.dumps({'error': 'Channel not found'}, ensure_ascii=False).encode())
             
         except Exception as e:
             self._set_headers(500)

@@ -24,20 +24,45 @@ class FeishuDocSync:
             文档URL
         """
         try:
-            # 使用feishu_doc工具创建文档
-            from tools import feishu_doc
+            # 使用OpenClaw的feishu_doc工具创建文档
+            import subprocess
+            import json
             
-            result = feishu_doc(action="create", title=title)
+            # 调用openclaw命令行工具
+            result = subprocess.run(
+                ['openclaw', 'feishu', 'doc', 'create', title],
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
             
-            if result and result.get('url'):
-                print(f"  ✅ 文档创建成功: {result['url']}")
-                return result['url']
-            else:
-                print(f"  ❌ 创建文档失败")
+            if result.returncode != 0:
+                print(f"  ❌ 创建文档失败: {result.stderr}")
                 return None
+            
+            # 解析输出，提取URL
+            # 格式: {"document_id": "...", "title": "...", "url": "..."}
+            try:
+                output = result.stdout.strip()
+                data = json.loads(output)
+                if data.get('url'):
+                    print(f"  ✅ 文档创建成功: {data['url']}")
+                    return data['url']
+            except json.JSONDecodeError:
+                # 尝试从文本中提取URL
+                import re
+                url_match = re.search(r'https?://[^\s]+', output)
+                if url_match:
+                    print(f"  ✅ 文档创建成功: {url_match.group(0)}")
+                    return url_match.group(0)
+            
+            print(f"  ❌ 无法解析文档URL")
+            return None
                 
         except Exception as e:
             print(f"  ❌ 创建飞书文档错误: {e}")
+            import traceback
+            traceback.print_exc()
             return None
     
     def write_to_feishu_doc(self, doc_url: str, content: str) -> bool:
@@ -52,7 +77,7 @@ class FeishuDocSync:
             是否成功
         """
         try:
-            from tools import feishu_doc
+            import subprocess
             
             # 提取文档token
             doc_token = self.extract_doc_token(doc_url)
@@ -60,14 +85,28 @@ class FeishuDocSync:
                 print(f"  ❌ 无法提取文档token")
                 return False
             
-            # 写入内容（覆盖模式）
-            result = feishu_doc(action="write", doc_token=doc_token, content=content)
+            # 写入内容（覆盖模式）- 使用临时文件传递内容
+            import tempfile
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False, encoding='utf-8') as f:
+                f.write(content)
+                temp_path = f.name
             
-            if result and not result.get('error'):
-                return True
-            else:
-                print(f"  ❌ 写入失败: {result.get('error', 'Unknown error')}")
-                return False
+            try:
+                # 使用openclaw命令
+                result = subprocess.run(
+                    ['openclaw', 'feishu', 'doc', 'write', doc_token, temp_path],
+                    capture_output=True,
+                    text=True,
+                    timeout=30
+                )
+                
+                if result.returncode == 0:
+                    return True
+                else:
+                    print(f"  ❌ 写入失败: {result.stderr}")
+                    return False
+            finally:
+                os.unlink(temp_path)
                 
         except Exception as e:
             print(f"  ❌ 写入飞书文档错误: {e}")
@@ -87,7 +126,8 @@ class FeishuDocSync:
             是否成功
         """
         try:
-            from tools import feishu_doc
+            import subprocess
+            import tempfile
             
             # 提取文档token
             doc_token = self.extract_doc_token(doc_url)
@@ -95,14 +135,26 @@ class FeishuDocSync:
                 print(f"  ❌ 无法提取文档token")
                 return False
             
-            # 追加内容
-            result = feishu_doc(action="append", doc_token=doc_token, content=content)
+            # 追加内容 - 使用临时文件
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False, encoding='utf-8') as f:
+                f.write(content)
+                temp_path = f.name
             
-            if result and not result.get('error'):
-                return True
-            else:
-                print(f"  ❌ 追加失败: {result.get('error', 'Unknown error')}")
-                return False
+            try:
+                result = subprocess.run(
+                    ['openclaw', 'feishu', 'doc', 'append', doc_token, temp_path],
+                    capture_output=True,
+                    text=True,
+                    timeout=30
+                )
+                
+                if result.returncode == 0:
+                    return True
+                else:
+                    print(f"  ❌ 追加失败: {result.stderr}")
+                    return False
+            finally:
+                os.unlink(temp_path)
                 
         except Exception as e:
             print(f"  ❌ 追加飞书文档错误: {e}")

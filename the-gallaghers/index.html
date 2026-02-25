@@ -138,6 +138,29 @@ function openApp(id) {
                     <div class="bg-white border border-gray-200 rounded-2xl p-6">
                         <h5 class="font-semibold text-lg mb-4">快速操作</h5>
                         <div class="space-y-3">
+                            <div class="bg-gray-50 rounded-lg p-3 mb-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm font-medium text-gray-700">定时任务</span>
+                                    <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">每天 2:00 AM</span>
+                                </div>
+                                <p class="text-xs text-gray-500">自动抓取新视频，根据博主配置的模式分析</p>
+                            </div>
+                            
+                            <!-- 分析模式设置 -->
+                            <div class="bg-gray-50 rounded-lg p-3 mb-4">
+                                <div class="text-sm font-medium text-gray-700 mb-2">设置分析模式</div>
+                                <div class="flex gap-2">
+                                    <select id="mode-channel-select" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                        <option value="">选择博主...</option>
+                                    </select>
+                                </div>
+                                <div class="flex gap-2 mt-2">
+                                    <button onclick="setSelectedChannelMode('local')" class="flex-1 px-3 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors text-sm">🤖 本地AI</button>
+                                    <button onclick="setSelectedChannelMode('pass_through')" class="flex-1 px-3 py-2 bg-purple-50 text-purple-700 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors text-sm">⚡ 直通模式</button>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-2">设置后定时任务会自动使用对应模式</p>
+                            </div>
+                            
                             <button onclick="refreshStatus()" class="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">刷新状态</button>
                             <button onclick="runAnalysis()" class="w-full px-4 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors">立即分析（本地AI）</button>
                             <button onclick="runPassThrough()" class="w-full px-4 py-2 bg-purple-50 text-purple-700 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors" title="YouTube→NotebookLM，避免IP限制">⚡ 直通模式（推荐）</button>
@@ -277,11 +300,55 @@ async function loadChannelsFilter() {
         
         if (result.success) {
             const filter = document.getElementById('filter-channel');
-            filter.innerHTML = '<option value="">所有博主</option>' + 
-                result.data.map(ch => `<option value="${ch.name}">${ch.display_name || ch.name}</option>`).join('');
+            const modeFilter = document.getElementById('mode-channel-select');
+            
+            const options = result.data.map(ch => {
+                const modeIcon = ch.analysis_mode === 'pass_through' ? '⚡' : '🤖';
+                return `<option value="${ch.name}">${modeIcon} ${ch.display_name || ch.name}</option>`;
+            }).join('');
+            
+            filter.innerHTML = '<option value="">所有博主</option>' + options;
+            
+            if (modeFilter) {
+                modeFilter.innerHTML = '<option value="">选择博主...</option>' + options;
+            }
         }
     } catch (error) {
         console.error('加载频道过滤器失败:', error);
+    }
+}
+
+async function setSelectedChannelMode(mode) {
+    const select = document.getElementById('mode-channel-select');
+    const channelName = select.value;
+    
+    if (!channelName) {
+        alert('请先选择博主');
+        return;
+    }
+    
+    await setChannelMode(channelName, mode);
+}
+
+async function setChannelMode(channelName, mode) {
+    try {
+        const response = await fetch(`${API_BASE}/channels/mode`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ channel: channelName, mode: mode })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert(`已将 ${channelName} 设置为 ${mode === 'pass_through' ? '⚡ 直通模式' : '🤖 本地AI模式'}`);
+            loadStatus();
+            loadChannelsFilter();
+        } else {
+            alert('设置失败: ' + (result.error || '未知错误'));
+        }
+    } catch (error) {
+        alert('请求失败，请检查API服务器是否运行');
     }
 }
 

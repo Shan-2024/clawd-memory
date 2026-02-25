@@ -68,6 +68,7 @@ class ConfigManager:
             "display_name": display_name or name,
             "added_at": datetime.now().isoformat(),
             "status": "active",
+            "analysis_mode": "local",  # 分析模式: local=本地AI, pass_through=直通模式
             "stats": {
                 "total_videos": 0,
                 "analyzed_count": 0,
@@ -153,6 +154,28 @@ class ConfigManager:
     def get_channel_notebook_dir(self, name: str) -> str:
         """获取频道的笔记目录"""
         return os.path.join(self.notebooks_dir, name)
+    
+    def set_channel_analysis_mode(self, name: str, mode: str) -> bool:
+        """
+        设置频道的分析模式
+        
+        Args:
+            name: 频道名称
+            mode: 分析模式 ('local' 或 'pass_through')
+        
+        Returns:
+            是否成功
+        """
+        if mode not in ['local', 'pass_through']:
+            raise ValueError("分析模式必须是 'local' 或 'pass_through'")
+        
+        config = self.load()
+        for channel in config['channels']:
+            if channel['name'] == name:
+                channel['analysis_mode'] = mode
+                self.save()
+                return True
+        return False
 
 
 # 全局配置管理器实例
