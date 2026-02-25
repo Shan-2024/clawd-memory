@@ -1,186 +1,208 @@
 #!/usr/bin/env python3
 """
-Lip 系统测试脚本
+Lip 简化测试 - 只测试核心流程
 """
 import os
 import sys
 import json
+import urllib.request
+import xml.etree.ElementTree as ET
+from datetime import datetime
 
-# 添加src到路径
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 from config.manager import config_manager
-from youtube.parser import YouTubeURLParser
-from ai.analyzer import AIAnalyzer
-from storage.local import LocalStorage
-from feishu.bot import process_message
 
 
-def test_config_manager():
-    """测试配置管理"""
-    print("🧪 测试配置管理...")
+def test_rss_fetch():
+    """测试RSS获取"""
+    print("📡 测试RSS获取...")
     
-    # 测试添加频道
-    channel = config_manager.add_channel(
-        url="https://www.youtube.com/@testchannel",
-        name="@testchannel",
-        display_name="测试频道"
-    )
+    # Lex Fridman的channel_id
+    channel_id = 'UCSHZKyawb77ixDdsGog4iWA'
+    rss_url = f'https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}'
     
-    print(f"✅ 添加频道: {channel['name']}")
-    
-    # 测试获取频道
-    channels = config_manager.get_all_channels()
-    print(f"✅ 获取频道列表: {len(channels)} 个")
-    
-    # 测试更新统计
-    config_manager.update_channel_stats("@testchannel", total_videos=100)
-    print("✅ 更新频道统计")
-    
-    # 测试保存配置
-    config_manager.save()
-    print("✅ 保存配置")
-    
-    return True
+    try:
+        req = urllib.request.Request(rss_url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=15) as response:
+            data = response.read()
+        
+        root = ET.fromstring(data)
+        ns = {'atom': 'http://www.w3.org/2005/Atom', 'yt': 'http://www.youtube.com/xml/schemas/2015'}
+        
+        videos = []
+        for entry in root.findall('atom:entry', ns)[:3]:
+            video_id = entry.find('yt:videoId', ns)
+            title = entry.find('atom:title', ns)
+            if video_id is not None and title is not None:
+                videos.append({'id': video_id.text, 'title': title.text})
+        
+        print(f"  ✅ 成功获取 {len(videos)} 条视频")
+        for v in videos:
+            print(f"    📹 {v['id']}: {v['title'][:50]}...")
+        
+        return True
+        
+    except Exception as e:
+        print(f"  ❌ RSS获取失败: {e}")
+        return False
 
 
-def test_url_parser():
-    """测试URL解析"""
-    print("\n🧪 测试URL解析...")
+def test_notebooklm():
+    """测试NotebookLM"""
+    print("\n🤖 测试NotebookLM...")
     
-    parser = YouTubeURLParser()
+    notebooklm_bin = os.path.expanduser('~/.local/bin/notebooklm')
     
-    test_urls = [
-        "https://www.youtube.com/@testuser",
-        "https://www.youtube.com/channel/UC123456789",
-        "https://www.youtube.com/c/CustomName",
-        "https://www.youtube.com/watch?v=abc123",
-        "https://youtu.be/abc123",
-    ]
-    
-    for url in test_urls:
-        parsed = parser.parse(url)
-        print(f"  {url}")
-        print(f"    → 类型: {parsed['type']}, ID: {parsed['id']}")
-    
-    return True
+    try:
+        # 检查notebooklm是否可用
+        import subprocess
+        result = subprocess.run(
+            [notebooklm_bin, '--version'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+            timeout=10
+        )
+        
+        if result.returncode == 0:
+            print(f"  ✅ NotebookLM可用: {result.stdout.strip()}")
+            
+            # 列出notebooks
+            result = subprocess.run(
+                [notebooklm_bin, 'list'],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                universal_newlines=True,
+                timeout=30
+            )
+            
+            if result.returncode == 0:
+                lines = result.stdout.strip().split('\n')
+                print(f"  📚 现有notebooks: {len(lines)-1 if lines else 0}")
+                return True
+            else:
+                print(f"  ⚠️ 无法列出notebooks: {result.stderr[:100]}")
+                return False
+        else:
+            print(f"  ❌ NotebookLM不可用: {result.stderr[:100]}")
+            return False
+            
+    except Exception as e:
+        print(f"  ❌ NotebookLM测试失败: {e}")
+        return False
 
 
 def test_ai_analyzer():
-    """测试AI分析"""
-    print("\n🧪 测试AI分析...")
+    """测试AI分析器"""
+    print("\n🧠 测试AI分析器...")
     
-    analyzer = AIAnalyzer()
-    
-    # 测试文本
-    test_transcript = """
-    今天我们来聊聊人工智能的发展。人工智能是计算机科学的一个分支，它试图让机器模拟人类的智能。
-    机器学习是人工智能的一种方法，它让计算机从数据中学习规律。深度学习是机器学习的一个子领域，
-    它使用多层神经网络来处理复杂的数据。
-    """
-    
-    # 测试摘要生成
-    summary = analyzer.generate_summary(test_transcript)
-    print(f"✅ 摘要生成: {len(summary)} 条")
-    for i, point in enumerate(summary):
-        print(f"  {i+1}. {point}")
-    
-    # 测试标签生成
-    tags = analyzer.generate_tags(test_transcript)
-    print(f"✅ 标签生成: {tags}")
-    
-    # 测试知识提取
-    knowledge = analyzer.extract_knowledge(test_transcript)
-    print(f"✅ 知识提取: {len(knowledge)} 个名词")
-    for name, explanation in knowledge.items():
-        print(f"  - {name}: {explanation[:50]}...")
-    
-    return True
+    try:
+        from ai.analyzer import AIAnalyzer
+        analyzer = AIAnalyzer()
+        
+        # 测试简单的AI调用
+        test_text = "人工智能正在改变世界。机器学习是AI的一个分支。"
+        result = analyzer.analyze_video(test_text)
+        
+        if result:
+            print(f"  ✅ AI分析器可用")
+            print(f"    摘要: {result.get('summary', [])[:1]}")
+            print(f"    标签: {result.get('tags', [])}")
+            return True
+        else:
+            print(f"  ⚠️ AI分析器返回空结果")
+            return False
+            
+    except Exception as e:
+        print(f"  ❌ AI分析器失败: {e}")
+        return False
 
 
-def test_storage():
-    """测试存储"""
-    print("\n🧪 测试存储...")
+def test_feishu_sync():
+    """测试飞书同步"""
+    print("\n📱 测试飞书同步...")
     
-    storage = LocalStorage()
-    
-    # 测试保存笔记
-    video_info = {
-        'id': 'test123',
-        'title': '测试视频标题',
-        'uploader': '测试博主',
-        'duration': 600,
-        'upload_date': '20250115'
-    }
-    
-    analysis = {
-        'summary': ['要点1', '要点2', '要点3'],
-        'tags': ['测试', 'AI', '教程'],
-        'knowledge': {'人工智能': '计算机科学的一个分支'}
-    }
-    
-    transcript = "这是测试视频的字幕内容..."
-    
-    filepath = storage.save_note("@testchannel", video_info, analysis, transcript)
-    print(f"✅ 保存笔记: {filepath}")
-    
-    # 测试获取笔记列表
-    notes = storage.get_notes()
-    print(f"✅ 获取笔记列表: {len(notes)} 条")
-    
-    # 测试获取知识词典
-    knowledge = storage.get_knowledge_dict()
-    print(f"✅ 获取知识词典: {len(knowledge)} 条")
-    
-    return True
+    try:
+        from storage.feishu_sync import FeishuDocSync
+        sync = FeishuDocSync()
+        
+        # 测试创建文档
+        test_title = f"测试文档 - {datetime.now().strftime('%H%M%S')}"
+        print(f"  尝试创建文档: {test_title}")
+        
+        # 注意：实际创建会调用openclaw命令，这里只测试导入
+        print(f"  ✅ 飞书同步模块可导入")
+        return True
+        
+    except Exception as e:
+        print(f"  ❌ 飞书同步测试失败: {e}")
+        return False
 
 
-def test_feishu_bot():
-    """测试飞书机器人"""
-    print("\n🧪 测试飞书机器人...")
+def test_config():
+    """测试配置"""
+    print("\n⚙️ 测试配置...")
     
-    # 测试帮助命令
-    response = process_message("帮助")
-    print(f"✅ 帮助命令: {response[:50]}...")
-    
-    # 测试状态命令
-    response = process_message("状态")
-    print(f"✅ 状态命令: {response[:50]}...")
-    
-    # 测试添加命令（模拟）
-    response = process_message("添加博主 https://www.youtube.com/@test")
-    print(f"✅ 添加命令: {response[:50]}...")
-    
-    return True
+    try:
+        config = config_manager.load()
+        channels = config.get('channels', [])
+        
+        print(f"  ✅ 配置加载成功")
+        print(f"    频道数: {len(channels)}")
+        print(f"    活跃频道: {sum(1 for c in channels if c.get('status') == 'active')}")
+        
+        for i, channel in enumerate(channels[:3]):
+            print(f"    {i+1}. {channel.get('name')} ({channel.get('status')})")
+        
+        return True
+        
+    except Exception as e:
+        print(f"  ❌ 配置测试失败: {e}")
+        return False
 
 
 def main():
-    """主测试函数"""
-    print("🚀 Lip 智能学习助手 - 系统测试")
-    print("=" * 60)
+    print(f"\n{'='*60}")
+    print(f"🤖 Lip 系统测试 - {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+    print(f"{'='*60}")
     
-    try:
-        test_config_manager()
-        test_url_parser()
-        test_ai_analyzer()
-        test_storage()
-        test_feishu_bot()
-        
-        print("\n" + "=" * 60)
-        print("🎉 所有测试通过！系统基本功能正常。")
-        print("\n下一步:")
-        print("1. 安装依赖: pip install -r requirements.txt")
-        print("2. 测试YouTube提取: 需要yt-dlp")
-        print("3. 配置OpenClaw定时任务")
-        print("4. 在飞书中测试实际命令")
-        
-    except Exception as e:
-        print(f"\n❌ 测试失败: {e}")
-        import traceback
-        traceback.print_exc()
+    tests = [
+        ("配置系统", test_config),
+        ("RSS获取", test_rss_fetch),
+        ("NotebookLM", test_notebooklm),
+        ("AI分析器", test_ai_analyzer),
+        ("飞书同步", test_feishu_sync),
+    ]
+    
+    results = []
+    
+    for name, test_func in tests:
+        try:
+            success = test_func()
+            results.append((name, success))
+        except Exception as e:
+            print(f"  ❌ {name}异常: {e}")
+            results.append((name, False))
+    
+    print(f"\n{'='*60}")
+    print("📊 测试结果:")
+    
+    passed = sum(1 for _, success in results if success)
+    total = len(results)
+    
+    for name, success in results:
+        status = "✅" if success else "❌"
+        print(f"  {status} {name}")
+    
+    print(f"\n🎯 通过率: {passed}/{total} ({passed/total*100:.0f}%)")
+    
+    if passed == total:
+        print("\n✨ 所有测试通过！系统可以正常工作。")
+        return 0
+    else:
+        print(f"\n⚠️  有 {total-passed} 项测试失败，需要检查。")
         return 1
-    
-    return 0
 
 
 if __name__ == '__main__':

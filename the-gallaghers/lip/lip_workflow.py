@@ -188,8 +188,9 @@ class LipWorkflow:
         try:
             result = subprocess.run(
                 cmd,
-                capture_output=True,
-                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                universal_newlines=True,
                 timeout=30
             )
             
@@ -257,15 +258,15 @@ class LipWorkflow:
             # 切换到该notebook
             subprocess.run(
                 [self.notebooklm_bin, 'use', notebook_id],
-                capture_output=True,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                 timeout=30
             )
             
             # 添加视频source
             result = subprocess.run(
                 [self.notebooklm_bin, 'source', 'add', video['url']],
-                capture_output=True,
-                text=True,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                universal_newlines=True,
                 timeout=60
             )
             
@@ -281,8 +282,8 @@ class LipWorkflow:
             # 列出notebooks
             result = subprocess.run(
                 [self.notebooklm_bin, 'list'],
-                capture_output=True,
-                text=True,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                universal_newlines=True,
                 timeout=30
             )
             
@@ -300,8 +301,8 @@ class LipWorkflow:
             # 创建新notebook
             result = subprocess.run(
                 [self.notebooklm_bin, 'create', title],
-                capture_output=True,
-                text=True,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                universal_newlines=True,
                 timeout=30
             )
             
@@ -309,8 +310,8 @@ class LipWorkflow:
                 # 重新获取ID
                 result = subprocess.run(
                     [self.notebooklm_bin, 'list'],
-                    capture_output=True,
-                    text=True,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                    universal_newlines=True,
                     timeout=30
                 )
                 
@@ -360,7 +361,7 @@ class LipWorkflow:
             
             subprocess.run(
                 [self.notebooklm_bin, 'use', notebook_id],
-                capture_output=True,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                 timeout=30
             )
             
@@ -369,8 +370,8 @@ class LipWorkflow:
             
             result = subprocess.run(
                 [self.notebooklm_bin, 'ask', question],
-                capture_output=True,
-                text=True,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                universal_newlines=True,
                 timeout=60
             )
             

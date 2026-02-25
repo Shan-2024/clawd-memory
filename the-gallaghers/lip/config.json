@@ -12,12 +12,14 @@
       "status": "active",
       "stats": {
         "total_videos": 100,
-        "analyzed_count": 0,
+        "analyzed_count": 1,
         "last_analyzed_at": null
       },
       "sync_to_feishu": false,
       "feishu_doc_token": null,
-      "analyzed_video_ids": []
+      "analyzed_video_ids": [
+        "QrB5i_W-Igs"
+      ]
     },
     {
       "id": "ch_20260225101158",
@@ -44,12 +46,14 @@
       "status": "active",
       "stats": {
         "total_videos": 2,
-        "analyzed_count": 0,
+        "analyzed_count": 1,
         "last_analyzed_at": null
       },
       "sync_to_feishu": false,
       "feishu_doc_token": null,
-      "analyzed_video_ids": []
+      "analyzed_video_ids": [
+        "PG613H8hJco"
+      ]
     },
     {
       "id": "ch_20260225101614",
