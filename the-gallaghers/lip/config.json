@@ -72,7 +72,7 @@
       "stats": {
         "total_videos": 2,
         "analyzed_count": 0,
-        "last_analyzed_at": null
+        "last_analyzed_at": "2026-02-26T18:12:18.882199"
       },
       "sync_to_feishu": true,
       "feishu_doc_token": null,
