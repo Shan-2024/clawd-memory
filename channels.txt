@@ -1,0 +1,19 @@
+# 11个YouTube博主列表
+# 格式：频道名称,频道ID
+
+# 高优先级（每天处理）
+Lex Fridman,UCSHZKyawb77ixDdsGog4iWA
+Joe Rogan Experience,UCzQUP1qoWDoEbmsQxvdjxgQ
+The Diary Of A CEO,UCWY4H8r9hM4HlGjCk31Q_6g
+Dwarkesh Patel,UCWY4H8r9hM4HlGjCk31Q_6g  # 需要确认实际ID
+Jordan B Peterson,UCG8RbK1JNfW_BbaMk2fO_8g
+
+# 中优先级（轮换处理）
+No Code,UCWY4H8r9hM4HlGjCk31Q_6g  # 需要确认实际ID
+Matthew Berman,UCWY4H8r9hM4HlGjCk31Q_6g  # 需要确认实际ID
+Futurepedia,UCWY4H8r9hM4HlGjCk31Q_6g  # 需要确认实际ID
+AI Foundations,UCWY4H8r9hM4HlGjCk31Q_6g  # 需要确认实际ID
+
+# 低优先级
+Jack,UCWY4H8r9hM4HlGjCk31Q_6g  # 需要确认实际ID
+未知频道,UCjc1vfduI7BhVMXBLJLDjmA
