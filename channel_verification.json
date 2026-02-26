@@ -1,0 +1,54 @@
+{
+  "valid": [
+    {
+      "name": "Lex Fridman",
+      "id": "UCSHZKyawb77ixDdsGog4iWA",
+      "video_count": 15
+    },
+    {
+      "name": "Joe Rogan",
+      "id": "UCzQUP1qoWDoEbmsQxvdjxgQ",
+      "video_count": 15
+    },
+    {
+      "name": "Jordan B Peterson",
+      "id": "UCL_f53ZEJxp8TtlOkHwMV9Q",
+      "video_count": 15
+    },
+    {
+      "name": "Unknown Channel",
+      "id": "UCjc1vfduI7BhVMXBLJLDjmA",
+      "video_count": 15
+    }
+  ],
+  "invalid": [
+    {
+      "name": "The Diary Of A CEO",
+      "id": "UCWY4H8r9hM4HlGjCk31Q_6g"
+    },
+    {
+      "name": "Dwarkesh Patel",
+      "id": "UCWY4H8r9hM4HlGjCk31Q_6g"
+    },
+    {
+      "name": "Matthew Berman",
+      "id": "UCWY4H8r9hM4HlGjCk31Q_6g"
+    },
+    {
+      "name": "AI Explained",
+      "id": "UCWY4H8r9hM4HlGjCk31Q_6g"
+    },
+    {
+      "name": "Futurepedia",
+      "id": "UCWY4H8r9hM4HlGjCk31Q_6g"
+    },
+    {
+      "name": "No Code",
+      "id": "UCWY4H8r9hM4HlGjCk31Q_6g"
+    },
+    {
+      "name": "Jack",
+      "id": "UCWY4H8r9hM4HlGjCk31Q_6g"
+    }
+  ]
+}

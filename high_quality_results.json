@@ -1,0 +1,34 @@
+[
+  {
+    "channel": "Lex Fridman",
+    "notebook_id": "0d369fcb-2f0a-40d6-a423-25928ad3375c",
+    "videos_added": 4,
+    "target": 50,
+    "notebook_url": "https://notebooklm.google.com/notebook/0d369fcb-2f0a-40d6-a423-25928ad3375c",
+    "status": "差"
+  },
+  {
+    "channel": "Joe Rogan",
+    "notebook_id": "c9195c1b-02a5-4a7d-b4ca-5157a3068866",
+    "videos_added": 0,
+    "target": 50,
+    "notebook_url": "https://notebooklm.google.com/notebook/c9195c1b-02a5-4a7d-b4ca-5157a3068866",
+    "status": "差"
+  },
+  {
+    "channel": "Jordan B Peterson",
+    "notebook_id": "e5225c6c-b45f-4055-b0ce-c...",
+    "videos_added": 0,
+    "target": 50,
+    "notebook_url": "ID不完整",
+    "status": "差"
+  },
+  {
+    "channel": "Unknown Channel",
+    "notebook_id": "a160580f-fa3d-4277-bc91-cd7dd6f3c09d",
+    "videos_added": 15,
+    "target": 50,
+    "notebook_url": "https://notebooklm.google.com/notebook/a160580f-fa3d-4277-bc91-cd7dd6f3c09d",
+    "status": "一般"
+  }
+]
