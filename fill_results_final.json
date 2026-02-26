@@ -1,0 +1,57 @@
+[
+  {
+    "channel": "Lex Fridman",
+    "videos_added": 5,
+    "status": "完成"
+  },
+  {
+    "channel": "Joe Rogan",
+    "videos_added": 7,
+    "status": "完成"
+  },
+  {
+    "channel": "The Diary Of A CEO",
+    "videos_added": 0,
+    "status": "失败"
+  },
+  {
+    "channel": "Dwarkesh Patel",
+    "videos_added": 0,
+    "status": "失败"
+  },
+  {
+    "channel": "Jordan B Peterson",
+    "videos_added": 0,
+    "status": "失败"
+  },
+  {
+    "channel": "No Code",
+    "videos_added": 0,
+    "status": "失败"
+  },
+  {
+    "channel": "Matthew Berman",
+    "videos_added": 0,
+    "status": "失败"
+  },
+  {
+    "channel": "Futurepedia",
+    "videos_added": 0,
+    "status": "失败"
+  },
+  {
+    "channel": "AI Foundations",
+    "videos_added": 0,
+    "status": "失败"
+  },
+  {
+    "channel": "Jack",
+    "videos_added": 0,
+    "status": "失败"
+  },
+  {
+    "channel": "未知频道",
+    "videos_added": 12,
+    "status": "完成"
+  }
+]
