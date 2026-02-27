@@ -78,7 +78,7 @@ class LipNotebookLMDaily:
             # 创建笔记本
             notebook_name = f"{channel_name} - {self.today}"
             cmd = [NOTEBOOKLM_CLI, "create", notebook_name]
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             
             if result.returncode != 0:
                 print(f"创建笔记本失败: {result.stderr}")
@@ -110,10 +110,10 @@ class LipNotebookLMDaily:
         """添加来源到笔记本"""
         try:
             cmd = [NOTEBOOKLM_CLI, "use", notebook_id]
-            subprocess.run(cmd, capture_output=True)
+            subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             
             cmd = [NOTEBOOKLM_CLI, "source", "add", url]
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             
             if result.returncode == 0:
                 print(f"✓ 添加来源: {url}")
@@ -130,10 +130,10 @@ class LipNotebookLMDaily:
         """向NotebookLM提问"""
         try:
             cmd = [NOTEBOOKLM_CLI, "use", notebook_id]
-            subprocess.run(cmd, capture_output=True)
+            subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             
             cmd = [NOTEBOOKLM_CLI, "ask", question]
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             
             if result.returncode == 0:
                 return result.stdout.strip()
